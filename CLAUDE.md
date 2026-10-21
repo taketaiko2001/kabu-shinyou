@@ -5,7 +5,7 @@
 
 ## 毎回の手順（ルーティン）
 
-1. `pip install -q -r tools/requirements.txt`（失敗したら1回だけ再試行）
+1. `python3 -m pip install -q -r tools/requirements.txt`（失敗したら1回だけ再試行。クラウドでは `pip` が別のPythonを指すので必ず `python3 -m pip` を使う）
 2. `git pull --rebase`
 3. `timeout 540 python3 -u tools/run.py`（Bashツールの timeout は 600000 を指定する）
    - 「休場日のため更新しません」と出たら、何もせずに終了する。
@@ -39,4 +39,4 @@
 - JPXの日次信用残に、市場全体の買い残が1日で大きく変わる異常な日がある（2026/10/20申込分は前日比−28%）。run.py は前日比8%超の日を自動で除外する。
 - 株価は Yahoo Finance を優先し、取れない銘柄だけ stooq で補う。
 - ネットワークは環境の Network access で次のドメインを許可しておく必要がある：
-  www.jpx.co.jp, kabutan.jp, kabuyoho.jp, query1.finance.yahoo.com, query2.finance.yahoo.com, fc.yahoo.com, guce.yahoo.com, consent.yahoo.com, stooq.com, pypi.org, files.pythonhosted.org
+  www.jpx.co.jp, kabutan.jp, kabuyoho.jp, finance.yahoo.com, query1.finance.yahoo.com, query2.finance.yahoo.com, fc.yahoo.com, guce.yahoo.com, consent.yahoo.com, stooq.com（pip用のpypi.org等は「Allow package managers」で許可される）
