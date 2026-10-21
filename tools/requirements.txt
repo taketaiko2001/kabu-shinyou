@@ -1,0 +1,8 @@
+requests
+beautifulsoup4
+pandas
+numpy
+yfinance
+pypdfium2
+openpyxl
+jpholiday

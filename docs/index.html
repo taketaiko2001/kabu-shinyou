@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#24508f">
+<title>買い残減少スクリーナー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<style>
+/* Layout: 一枚の台帳。状態の帯 → 市況 → 操作 → 銘柄カード → 決算カレンダー → 成績 → 検証 → ルール */
+:root{
+  --bg:#f2f4f6; --surface:#ffffff; --surface-2:#e9edf1; --ink:#13202d; --ink-2:#465667; --ink-3:#6b7a89; --line:#d6dde4;
+  --accent:#24508f; --accent-ink:#ffffff; --accent-soft:#dfe8f5;
+  --good:#1a7f37; --good-soft:#dff2e5; --bad:#c0392b; --bad-soft:#f9e3df; --warn:#8a5d00; --warn-soft:#f8ecd2;
+  --series:#2a78d6; --series-soft:rgba(42,120,214,.12);
+  --f-display:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  --f-num:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f151b; --surface:#161e27; --surface-2:#1d2732; --ink:#e7edf3; --ink-2:#a9b6c3; --ink-3:#8492a0; --line:#2b3744;
+    --accent:#7ea9ea; --accent-ink:#0f151b; --accent-soft:#1c2c44;
+    --good:#4cc070; --good-soft:#15301f; --bad:#ef6b5e; --bad-soft:#3b1d1a; --warn:#e2ab3f; --warn-soft:#352812;
+    --series:#3987e5; --series-soft:rgba(57,135,229,.16); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#161e27; --surface-2:#1d2732; --ink:#e7edf3; --ink-2:#a9b6c3; --ink-3:#8492a0; --line:#2b3744;
+  --accent:#7ea9ea; --accent-ink:#0f151b; --accent-soft:#1c2c44;
+  --good:#4cc070; --good-soft:#15301f; --bad:#ef6b5e; --bad-soft:#3b1d1a; --warn:#e2ab3f; --warn-soft:#352812;
+  --series:#3987e5; --series-soft:rgba(57,135,229,.16); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:20px 56px;display:grid;gap:24px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(26px,4.4vw,38px);font-weight:900;letter-spacing:.01em}
+h2{font-size:21px;font-weight:700}
+p{margin:0}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-3)}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+header{display:grid;gap:10px}
+header .lead{color:var(--ink-2);max-width:70ch}
+.sync{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--ink-3)}
+.sync b{color:var(--ink-2)}
+.btn{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:999px;padding:4px 14px;cursor:pointer}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.err{background:var(--bad-soft);color:var(--bad);border-radius:var(--r);padding:12px 14px;font-size:14px}
+.note{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--r);padding:12px 16px;display:grid;gap:4px}
+.note .k{font-size:12px;font-weight:700;color:var(--accent)}
+.note p{color:var(--ink-2);font-size:14.5px}
+
+.market{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.market>div{padding:14px 16px;display:grid;gap:2px;min-width:0;border-right:1px solid var(--line)}
+.market>div:last-child{border-right:0}
+.market .lab{font-size:12px;color:var(--ink-3);font-weight:700;letter-spacing:.04em}
+.market .val{font-family:var(--f-num);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.market .sub{font-size:12.5px;color:var(--ink-2)}
+.market .stop{background:var(--warn-soft)}
+.market .stop .val{color:var(--warn)}
+@media (max-width:820px){.market{grid-template-columns:repeat(2,minmax(0,1fr))}.market>div:nth-child(2){border-right:0}.market>div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+@media (max-width:420px){.market{grid-template-columns:1fr}.market>div{border-right:0;border-bottom:1px solid var(--line)}.market>div:last-child{border-bottom:0}}
+
+.controls{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface-2);flex-wrap:wrap}
+.seg button{font:inherit;font-size:14px;border:0;background:transparent;color:var(--ink-2);padding:6px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.seg button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--ink-3);font-weight:700}
+select,input[type=number]{font:inherit;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+input[type=number]{width:150px;font-family:var(--f-num)}
+.chk{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--ink-2);cursor:pointer}
+.calc-note{font-size:12.5px;color:var(--ink-3);max-width:60ch}
+.count{font-size:13px;color:var(--ink-3)}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.card-head>div{min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.pill{font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;line-height:1.6;border:1px solid transparent;white-space:nowrap}
+.g-本命{background:var(--accent);color:var(--accent-ink)}
+.g-次点{border-color:var(--accent);color:var(--accent)}
+.g-監視{border-color:var(--line);color:var(--ink-3)}
+.t-main{background:var(--accent-soft);color:var(--accent)}
+.t-rebound{background:var(--warn-soft);color:var(--warn)}
+.v-小{background:var(--good-soft);color:var(--good)}
+.v-中{background:var(--surface-2);color:var(--ink-2)}
+.v-大{background:var(--bad-soft);color:var(--bad)}
+.code{font-family:var(--f-num);font-size:13px;color:var(--ink-3);margin-right:8px}
+.name{font-family:var(--f-display);font-size:19px;font-weight:700;overflow-wrap:anywhere}
+.sector{font-size:12.5px;color:var(--ink-3)}
+.px{text-align:right;flex:none}
+.px .now{font-family:var(--f-num);font-size:22px;font-weight:600}
+.px .chg{font-size:12.5px;font-family:var(--f-num)}
+.up{color:var(--good)} .dn{color:var(--bad)}
+
+.ladder{position:relative;height:92px;margin-inline:24px}
+.ladder .base{position:absolute;left:0;right:0;top:44px;height:6px;border-radius:3px;background:var(--surface-2)}
+.ladder .zone{position:absolute;top:44px;height:6px}
+.ladder .zone.risk{background:var(--bad);opacity:.55;border-radius:3px 0 0 3px}
+.ladder .zone.gain{background:var(--good);opacity:.55;border-radius:0 3px 3px 0}
+.ladder .tick{position:absolute;top:38px;width:2px;height:18px;margin-left:-1px;background:var(--ink-2)}
+.ladder .lbl{position:absolute;transform:translateX(-50%);text-align:center;font-size:11.5px;line-height:1.25;white-space:nowrap}
+.ladder .lbl b{display:block;font-family:var(--f-num);font-size:12.5px;font-weight:600;color:var(--ink)}
+.ladder .lbl span{color:var(--ink-3)}
+.ladder .lbl.r1{top:60px} .ladder .lbl.r2{top:76px}
+.ladder .lbl.stop span{color:var(--bad)} .ladder .lbl.tp span{color:var(--good)} .ladder .lbl.entry span{color:var(--accent)}
+.ladder .now{position:absolute;top:2px;transform:translateX(-50%);text-align:center;font-size:11.5px;line-height:1.2;white-space:nowrap}
+.ladder .now b{display:block;font-family:var(--f-num);font-weight:600;font-size:12.5px}
+.ladder .now i{display:block;width:0;height:0;margin:3px auto 0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--ink)}
+.ladder.tall{height:108px}
+
+.levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lv{border-radius:8px;padding:8px 10px;background:var(--surface-2);min-width:0}
+.lv .k{font-size:12px;font-weight:700;color:var(--ink-3)}
+.lv .v{font-family:var(--f-num);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+.lv .p{font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
+.lv.entry{background:var(--accent-soft)} .lv.entry .k{color:var(--accent)}
+.lv.stop{background:var(--bad-soft)} .lv.stop .k{color:var(--bad)}
+.lv.tp{background:var(--good-soft)} .lv.tp .k{color:var(--good)}
+@media (max-width:460px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.expect{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:10px}
+.expect>div{min-width:0}
+.expect .k{font-size:12px;color:var(--ink-3);font-weight:700}
+.expect .v{font-family:var(--f-num);font-size:18px;font-weight:600}
+.expect .s{font-size:12px;color:var(--ink-2)}
+@media (max-width:460px){.expect{grid-template-columns:1fr 1fr}.expect>div:last-child{grid-column:1/-1}}
+
+.earn{border-radius:8px;padding:10px 12px;background:var(--surface-2);display:grid;gap:6px}
+.earn .h{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13.5px}
+.earn .h b{font-family:var(--f-num)}
+.e-上振れ期待{background:var(--good);color:var(--surface)}
+.e-下振れ警戒{background:var(--bad);color:var(--surface)}
+.e-中立{background:var(--surface);color:var(--ink-2);border-color:var(--line)}
+.earn .act{font-size:13.5px;font-weight:700;color:var(--ink)}
+.earn ul{margin:0;padding:0;list-style:none;display:grid;gap:2px}
+.earn li{font-size:13px;color:var(--ink-2);padding-left:1.3em;position:relative}
+.earn li::before{position:absolute;left:0;font-weight:700}
+.earn li.s1::before{content:"＋";color:var(--good)}
+.earn li.s-1::before{content:"－";color:var(--bad)}
+.earn li.s0::before{content:"・";color:var(--ink-3)}
+.earn .aft{font-size:12.5px;color:var(--ink-3)}
+
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px;margin:0}
+.facts div{min-width:0}
+.facts dt{font-size:12px;color:var(--ink-3);font-weight:700}
+.facts dd{margin:0;font-family:var(--f-num);font-size:13.5px}
+@media (max-width:460px){.facts{grid-template-columns:1fr 1fr}}
+.why{display:grid;gap:8px}
+.why ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.why li{font-size:14px;color:var(--ink-2)}
+.why h4{font-size:13px;font-weight:700}
+.why .pro h4{color:var(--good)} .why .con h4{color:var(--bad)}
+.ai{font-size:13.5px;color:var(--ink-2);border-left:3px solid var(--accent);padding-left:10px}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent)}
+.charts{display:grid;gap:14px;margin-top:12px}
+.chart-t{font-size:12.5px;font-weight:700;color:var(--ink-3);margin-bottom:4px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;line-height:1.45;padding:6px 8px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%);font-family:var(--f-num);z-index:2}
+.news{margin:0;padding-left:1.1em;font-size:13px;color:var(--ink-2);display:grid;gap:2px}
+.empty{padding:28px;text-align:center;color:var(--ink-3);border:1px dashed var(--line);border-radius:var(--r)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px;min-width:0}
+.panel p,.panel li{color:var(--ink-2);max-width:74ch}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--ink-3);font-weight:700}
+td.n{font-family:var(--f-num);text-align:right}
+td.wrap{white-space:normal;min-width:14em}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.stats div{background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.stats .k{font-size:12px;color:var(--ink-3);font-weight:700}
+.stats .v{font-family:var(--f-num);font-size:18px;font-weight:600}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ev-rows{display:grid;gap:12px}
+.ev-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:6px 18px;align-items:center}
+.ev-row .t{font-size:14px;font-weight:700;color:var(--ink)}
+.ev-row .d{font-size:12px;color:var(--ink-3)}
+.ev-track{position:relative;height:26px}
+.ev-track .zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ink-3)}
+.ev-bar{position:absolute;top:5px;height:16px}
+.ev-bar.pos{left:50%;background:var(--series);border-radius:0 4px 4px 0}
+.ev-bar.neg{right:50%;background:var(--bad);border-radius:4px 0 0 4px}
+.ev-val{position:absolute;top:2px;font-family:var(--f-num);font-size:12.5px;font-weight:600;white-space:nowrap}
+.ev-axis{display:flex;justify-content:space-between;font-family:var(--f-num);font-size:11.5px;color:var(--ink-3)}
+@media (max-width:640px){.ev-row{grid-template-columns:1fr}}
+.rules{margin:0;padding-left:1.3em;display:grid;gap:8px}
+.rules b{color:var(--ink)}
+footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--ink-3)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">信用需給 × 決算予想 ・ 東証全銘柄 ・ 平日9:00と12:30に自動更新</div>
+    <h1>買い残減少スクリーナー</h1>
+    <p class="lead">信用の買い残が「出来高に比べて重かったのに大きく減った」銘柄を拾い、押し目の買い値・損切り・利確を出します。決算が近い銘柄は、業績の進み具合・市場予想との差・決算前の上昇を見て、決算で上がるか下がるかも予想に入れています。</p>
+    <div class="sync"><span>予想の更新 <b id="upd">読み込み中…</b></span><span>信用残 <b id="mdate">—</b></span><span>株価 <b id="pdate">—</b></span><span id="synced"></span><button type="button" class="btn" id="reload">最新を読み込む</button></div>
+  </header>
+  <div class="err" id="err" hidden></div>
+  <div class="note" id="aiMarket" hidden><span class="k">トレーダーのひとこと</span><p></p></div>
+
+  <section class="market" aria-label="市況">
+    <div><span class="lab">日経平均</span><span class="val" id="mN">—</span><span class="sub" id="mNs"></span></div>
+    <div><span class="lab">市場全体の信用買い残</span><span class="val" id="mB">—</span><span class="sub" id="mBs"></span></div>
+    <div><span class="lab">信用倍率（金額・2市場）</span><span class="val" id="mR">—</span><span class="sub" id="mRs"></span></div>
+    <div class="stop"><span class="lab">新規買いを止めるライン</span><span class="val" id="mL">—</span><span class="sub">日経平均の終値がここ（直近10日の安値）を割ったら、新しい買いは見送る</span></div>
+  </section>
+
+  <section class="controls" aria-label="絞り込みと資金設定">
+    <div class="row">
+      <div class="seg" role="group" aria-label="表示する型">
+        <button type="button" data-g="main" aria-pressed="true">本命：需給改善型</button>
+        <button type="button" data-g="rebound" aria-pressed="false">リバウンド：投げ一巡型</button>
+        <button type="button" data-g="all" aria-pressed="false">すべて</button>
+      </div>
+      <label class="f" for="sort">並び順
+        <select id="sort">
+          <option value="rec">おすすめ順</option>
+          <option value="ev">期待値が高い順</option>
+          <option value="earnP">決算で上がる確率が高い順</option>
+          <option value="rate">買い残の減少率が大きい順</option>
+          <option value="risk">損切り幅が小さい順</option>
+        </select>
+      </label>
+      <label class="chk" for="hideEarn"><input type="checkbox" id="hideEarn"> 決算まで5営業日以内の銘柄を隠す</label>
+    </div>
+    <div class="row">
+      <label class="f" for="cap">運用資金（円）<input type="number" id="cap" min="100000" step="100000" value="1000000" inputmode="numeric"></label>
+      <label class="f" for="riskPct">1回で許す損失（資金の％）<input type="number" id="riskPct" min="0.2" max="5" step="0.1" value="1" inputmode="decimal"></label>
+      <p class="calc-note">損切りに引っかかったときの損失がこの額に収まる株数（100株単位）を各カードに出します。1銘柄に使う資金は30%までに抑えています。入力はこの端末に保存されます。</p>
+    </div>
+    <div class="count" id="count" aria-live="polite"></div>
+  </section>
+
+  <section class="grid" id="cards" aria-label="銘柄"><div class="empty">データを読み込んでいます…</div></section>
+
+  <section class="panel" aria-labelledby="calh">
+    <h2 id="calh">決算カレンダーと予想（15営業日以内）</h2>
+    <p>詳しく調べた候補のうち、近く決算がある銘柄です。上がる確率は、下の「検証」で分かった傾向（決算前の上昇・直近の業績）と、進捗率・市場予想との差を合わせた目安です。</p>
+    <div class="tbl"><table><thead><tr><th>決算日</th><th>銘柄</th><th>判定</th><th>上がる確率</th><th>想定の値幅</th><th>対応</th></tr></thead><tbody id="cal"></tbody></table></div>
+  </section>
+
+  <section class="panel" aria-labelledby="trh">
+    <h2 id="trh">これまでの予想の成績</h2>
+    <p>「本命」「次点」に出た銘柄を、買い目安で指値を入れたものとして自動で記録し、その後の株価で損切り・利確・時間切れを判定しています（同じ銘柄が続けて出た場合は1件）。</p>
+    <div class="stats" id="trs"></div>
+    <div class="tbl"><table><thead><tr><th>記録日</th><th>銘柄</th><th>状態</th><th>買値</th><th>損益</th><th>メモ</th></tr></thead><tbody id="trt"></tbody></table></div>
+  </section>
+
+  <section class="panel" aria-labelledby="evh">
+    <h2 id="evh">検証①：買い残の減少は本当に効くのか</h2>
+    <p>売買代金の多い220銘柄について、2025年6月〜2026年7月の週次信用残（12,191件）を使いました。信用残が公表された日の終値で買ったとして、20営業日後に日経平均よりどれだけ上回ったかの平均です。</p>
+    <div class="ev-rows" id="ev1"></div>
+    <div class="ev-axis" aria-hidden="true"><span>日経平均より下</span><span>0</span><span>日経平均より上</span></div>
+    <ul>
+      <li>買い残が減っても、それが出来高の1日分に満たない（大型株に多い）なら効果はなく、むしろ日経平均に負けていました。</li>
+      <li>効いたのは、減る前の買い残が出来高の1日分以上あった銘柄です。株価が下がる中で減った「投げ一巡型」は成績がよい一方、件数が少なく振れ幅は大きいと見てください。</li>
+      <li>期待値は、下のルールで売買した場合の1回あたりの平均損益です（本命型は値幅ATRの0.35倍、投げ一巡型は0.89倍）。決算をまたぐ場合は、決算予想の分を足しています。</li>
+    </ul>
+  </section>
+
+  <section class="panel" aria-labelledby="ev2h">
+    <h2 id="ev2h">検証②：決算の前後で株価はどう動いたか</h2>
+    <p id="ev2n"></p>
+    <div class="tbl"><table><thead><tr><th>条件</th><th>件数</th><th>決算での平均</th><th>中央値</th><th>上がった割合</th><th>その後20日</th></tr></thead><tbody id="ev2"></tbody></table></div>
+    <ul>
+      <li>決算前に大きく上げた銘柄は、決算翌日に売られやすい（期待が織り込み済み）。ただしその後20日は上がりやすく、決算後の下げは押し目になりやすい。</li>
+      <li>直近の業績が強い銘柄は決算でも上がりやすい。業績が強くても決算前に上げすぎていると、逆に下がりやすい。</li>
+      <li>過去の決算で大きく動いた銘柄ほど、次も大きく動く（相関0.31）。想定の値幅はその銘柄の過去の平均です。</li>
+      <li>進捗率と市場予想（コンセンサス）との差は、過去の値が手に入らず検証できていません。上がる確率への影響は小さめにしています。</li>
+    </ul>
+  </section>
+
+  <section class="panel" aria-labelledby="ruleh">
+    <h2 id="ruleh">価格の決め方と売買のルール</h2>
+    <p>ATRは「過去14日の平均的な1日の値幅」です。値動きの大きい銘柄ほど、損切りも利確も広くとります。</p>
+    <ol class="rules">
+      <li><b>買い目安（押し目）</b>：株価が25日線より上なら、25日線と「現在値−1ATR」の高い方。下なら、20日安値の少し上と「現在値−1ATR」の高い方。指値は5営業日有効。届かなければ見送り。</li>
+      <li><b>損切り</b>：買値−1.5ATR。買ったらすぐ逆指値を入れる。</li>
+      <li><b>利確1</b>：買値＋1.5ATRで半分を売る。売ったら残りの損切りを買値まで引き上げる。</li>
+      <li><b>利確2</b>：買値＋3ATR。手前に60日高値や52週高値があるときはその少し下。</li>
+      <li><b>時間切れ</b>：20営業日たっても届かなければ残りも売る。</li>
+      <li><b>決算</b>：カードの「決算予想」の対応に従う。上がる確率が60%以上ならまたいでよい、42%以下なら前日までに全部売る、その間は半分以上を売る。決算の窓開けは逆指値では防げない。</li>
+      <li><b>株数</b>：損切り時の損失が資金の1%程度に収まる株数にする。</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p>このページは公開データから機械的に計算した分析で、投資の助言や売買の推奨ではありません。株価は日々動くため、発注の前に必ず最新の株価・ニュース・決算日を確認してください。</p>
+    <p>データ：信用残＝日本取引所グループ（日々公表・週次）／株価＝Yahoo Finance（取れない銘柄はstooq）／決算予定日・業績・ニュース＝株探／市場予想・目標株価＝株予報／過去の週次信用残（検証用）＝irbank.net。</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const REPO='taketaiko2001/kabu-shinyou', BR='main';
+  const RAW=p=>`https://raw.githubusercontent.com/${REPO}/${BR}/docs/data/${p}?_=${Date.now()}`;
+  const $=id=>document.getElementById(id);
+  const fmt=(v,d=0)=>v==null||isNaN(v)?'—':Number(v).toLocaleString('ja-JP',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const sgn=(v,d=1)=>v==null||isNaN(v)?'—':(v>0?'+':v<0?'−':'')+fmt(Math.abs(v),d);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const yen=v=>Math.abs(v)>=10000?fmt(v/10000,1)+'万円':fmt(v)+'円';
+  const pxf=v=>v<1000&&v%1!==0?fmt(v,1):fmt(v);
+  const numOr=(v,u,alt='—')=>isNaN(parseFloat(v))?alt:esc(v)+u;
+  const store={get(k,d){try{const v=localStorage.getItem('kaizan.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('kaizan.'+k,JSON.stringify(v))}catch(e){}}};
+  const st={g:store.get('g','main'),sort:store.get('sort','rec'),hide:store.get('hide',false),cap:store.get('cap',1000000),risk:store.get('risk',1)};
+  $('sort').value=st.sort; $('hideEarn').checked=st.hide; $('cap').value=st.cap; $('riskPct').value=st.risk;
+  let D=null, NOTES=null;
+  const gradeRank={'本命':0,'次点':1,'監視':2};
+  const volClass=a=>a<2.5?'小':a<4?'中':'大';
+  const md=s=>s?s.slice(5).replace('-','/'):'';
+
+  async function load(){
+    $('err').hidden=true;
+    try{
+      const r=await fetch(RAW('latest.json'),{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      D=await r.json();
+      try{const n=await fetch(RAW('notes.json'),{cache:'no-store'});NOTES=n.ok?await n.json():null}catch(e){NOTES=null}
+      paint();
+      $('synced').textContent='読み込み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){
+      $('err').hidden=false;
+      $('err').innerHTML=`最新データを読み込めませんでした（${esc(e.message)}）。電波の良い所で「最新を読み込む」を押してください。元データ：<a href="https://github.com/${REPO}/blob/${BR}/docs/data/latest.json">GitHub</a>`;
+    }
+  }
+
+  function paint(){
+    const m=D.meta,k=D.market;
+    $('upd').textContent=m.updated.slice(5).replace('-','/')+'（'+m.slot+'）';
+    $('mdate').textContent=m.margin_date.slice(4,6)+'/'+m.margin_date.slice(6)+' 申込分';
+    $('pdate').textContent=m.price_asof.slice(5).replace('-','/');
+    $('mN').textContent=fmt(k.n225,0);
+    $('mNs').textContent='前日比 '+sgn((k.n225/k.n225_prev-1)*100,1)+'%・20日高値比 '+sgn((k.n225/k.n225_hi20-1)*100,1)+'%';
+    const t=k.total||{};
+    if(t.buy_shares){$('mB').textContent=fmt(t.buy_shares/100000,2)+'億株';$('mBs').textContent=t.date.slice(4,6)+'/'+t.date.slice(6)+'時点・前週比 '+sgn(t.buy_chg/t.buy_shares*100,1)+'%（'+fmt(t.buy_val/1000000,2)+'兆円）';
+      $('mR').textContent=fmt(t.ratio,2)+'倍';$('mRs').textContent=t.ratio>=8?'買いが多く、相場全体の上値は重い':t.ratio<=4?'買いは軽く、上値は軽い':'買いと売りは平常の範囲';}
+    $('mL').textContent=fmt(Math.floor(k.stop_line/100)*100)+'円';
+    const ai=NOTES&&NOTES.updated&&NOTES.updated.slice(0,10)===m.updated.slice(0,10)?NOTES:null;
+    $('aiMarket').hidden=!(ai&&ai.market); if(ai&&ai.market)$('aiMarket').querySelector('p').textContent=ai.market;
+    renderCards(ai);
+    // 決算カレンダー
+    $('cal').innerHTML=(D.calendar||[]).length?D.calendar.map(c=>`<tr><td class="num">${md(c.earn.replace(/\//g,'-'))}（${c.bdEarn}日）</td><td>${esc(c.code)} ${esc(c.name)}${c.inList?' <span class="pill g-次点">候補</span>':''}</td>
+      <td><span class="pill e-${esc(c.label)}">${esc(c.label)}</span></td><td class="n">${c.P}%</td><td class="n">±${fmt(c.M,1)}%</td><td class="wrap">${esc(c.action)}</td></tr>`).join(''):'<tr><td colspan="6" class="muted">15営業日以内に決算がある候補はありません。</td></tr>';
+    // 成績
+    const s=D.track.summary;
+    $('trs').innerHTML=[['決済済み',s.closed+'件'],['勝率',s.closed?fmt(s.wins/s.closed*100,0)+'%':'—'],['平均損益',s.avg==null?'—':sgn(s.avg,2)+'%'],['保有中',s.open+'件'],['指値待ち',s.waiting+'件']]
+      .map(([a,b])=>`<div><div class="k">${a}</div><div class="v">${b}</div></div>`).join('');
+    const stl={waiting:'指値待ち',open:'保有中',closed:'決済',expired:'見送り'};
+    $('trt').innerHTML=(D.track.recent||[]).length?D.track.recent.map(p=>`<tr><td class="num">${md(p.created)}</td><td>${esc(p.code)} ${esc(p.name)}</td><td>${stl[p.status]||p.status}</td>
+      <td class="n">${fmt(p.fill||p.entry)}</td><td class="n ${p.pnl>0?'up':p.pnl<0?'dn':''}">${p.pnl==null?'—':sgn(p.pnl,1)+'%'}</td><td class="wrap">${esc(p.note||'')}</td></tr>`).join(''):'<tr><td colspan="6" class="muted">まだ記録がありません。次の更新から自動で記録されます。</td></tr>';
+    // 検証
+    const ev=D.evidence, mx=Math.max(...ev.margin.map(e=>Math.abs(e.x20)));
+    $('ev1').innerHTML=ev.margin.map(e=>{const w=Math.abs(e.x20)/mx*48,pos=e.x20>=0;
+      const det=[fmt(e.n)+'件',e.win!=null?'対日経の勝率 '+fmt(e.win,1)+'%':null,e.ev!=null?'ルール売買の期待値 '+sgn(e.ev,2)+'%/回':null,e.note].filter(Boolean).join('・');
+      const lab=pos?`<span class="ev-val" style="left:calc(50% + ${w}% + 6px)">${sgn(e.x20,2)}%</span>`:`<span class="ev-val" style="right:calc(50% + ${w}% + 6px)">${sgn(e.x20,2)}%</span>`;
+      return `<div class="ev-row"><div><div class="t">${esc(e.k)}</div><div class="d">${esc(det)}</div></div><div class="ev-track" role="img" aria-label="${esc(e.k)} ${sgn(e.x20,2)}%"><span class="zero"></span><span class="ev-bar ${pos?'pos':'neg'}" style="width:${w}%"></span>${lab}</div></div>`}).join('');
+    $('ev2n').textContent=ev.earn_note;
+    $('ev2').innerHTML=ev.earnings.map(e=>`<tr><td class="wrap">${esc(e.k)}</td><td class="n">${fmt(e.n)}</td><td class="n">${sgn(e.react,2)}%</td><td class="n">${e.med==null?'—':sgn(e.med,2)+'%'}</td><td class="n">${fmt(e.up,1)}%</td><td class="n">${e.post==null?'—':sgn(e.post,2)+'%'}</td></tr>`).join('');
+  }
+
+  function sizing(s){
+    const cap=Math.max(0,+st.cap||0),r=Math.max(0,+st.risk||0)/100,L=s.lv,per=L.entry-L.stop,allow=cap*r;
+    let sh=Math.floor(allow/per/100)*100;const lim=Math.floor(cap*0.3/L.entry/100)*100;let c=false;if(sh>lim){sh=lim;c=true}
+    if(sh<=0)return `<span class="dn">100株でも損切り時に −${yen(per*100)} で許容額（${yen(allow)}）を超えます</span>`;
+    return `<b class="num">${fmt(sh)}株</b>（必要資金 ${yen(sh*L.entry)}・損切り時 −${yen(sh*per)}）${c?'<span class="muted">※資金30%の上限で調整</span>':''}`;
+  }
+  function ladder(s){
+    const L=s.lv,lo=Math.min(L.stop,s.price)-0.5*s.atr,hi=Math.max(L.tp2,s.price)+0.5*s.atr,X=v=>(v-lo)/(hi-lo)*100;
+    const pts=[{k:'損切り',v:L.stop,c:'stop'},{k:'買い',v:L.entry,c:'entry'},{k:'利確1',v:L.tp1,c:'tp'},{k:'利確2',v:L.tp2,c:'tp'}];
+    let last=-99,tall=false;
+    const lb=pts.map(p=>{const x=X(p.v);let row='r1';if(x-last<17){row='r2';tall=true;last=-99}else last=x;
+      return `<span class="tick" style="left:${x}%"></span><span class="lbl ${row} ${p.c}" style="left:${x}%"><span>${p.k}</span><b>${fmt(p.v)}</b></span>`}).join('');
+    return `<div class="ladder${tall?' tall':''}" role="img" aria-label="損切り${fmt(L.stop)}円、買い${fmt(L.entry)}円、現在${pxf(s.price)}円、利確1 ${fmt(L.tp1)}円、利確2 ${fmt(L.tp2)}円"><span class="base"></span>
+      <span class="zone risk" style="left:${X(L.stop)}%;width:${X(L.entry)-X(L.stop)}%"></span><span class="zone gain" style="left:${X(L.entry)}%;width:${X(L.tp2)-X(L.entry)}%"></span>${lb}
+      <span class="now" style="left:${X(s.price)}%">現在<b>${pxf(s.price)}</b><i></i></span></div>`;
+  }
+  function earnBox(e){
+    if(!e||e.bdEarn==null)return `<div class="earn"><div class="h"><span class="pill e-中立">決算予想</span><span>決算予定日は未発表、または20営業日より先です。保有中の決算リスクは小さい見込み。</span></div></div>`;
+    return `<div class="earn"><div class="h"><span class="pill e-${esc(e.label)}">${esc(e.label)}</span><span>決算 <b>${md(e.earn.replace(/\//g,'-'))}</b>（あと${e.bdEarn}営業日）</span><span>上がる確率 <b>${e.P}%</b>・想定の値幅 <b>±${fmt(e.M,1)}%</b></span></div>
+      <div class="act">対応：${esc(e.action)}</div><ul>${(e.factors||[]).map(f=>`<li class="s${f.s}">${esc(f.t)}</li>`).join('')}</ul>${e.after?`<p class="aft">${esc(e.after)}</p>`:''}</div>`;
+  }
+  function card(s,ai){
+    const L=s.lv,chg=(s.price/s.prev-1)*100,typ=s.group==='main'?'需給改善型':'投げ一巡型・高リスク';
+    const ratio=(s.ratio0==null?'—':fmt(s.ratio0,1))+' → '+(s.ratio1==null?'—':fmt(s.ratio1,1))+'倍';
+    const evs=`値動き分 ${sgn(s.ev_tech,1)}%`+(Math.abs(s.ev_earn)>=0.05?`・決算分 ${sgn(s.ev_earn,1)}%`:'');
+    const note=ai&&ai.stocks&&ai.stocks[s.code];
+    return `<article class="card" id="c${s.code}">
+      <div class="card-head"><div>
+        <div class="tags"><span class="pill g-${s.grade}">${s.grade}</span><span class="pill t-${s.group}">${typ}</span><span class="pill v-${volClass(s.atrp)}">値動き${volClass(s.atrp)}</span></div>
+        <div><span class="code">${s.code}</span><span class="name">${esc(s.name)}</span></div>
+        <div class="sector">${esc(s.sector||'')}・${esc(s.mkt)}・PER ${numOr(s.per,'倍')}・PBR ${numOr(s.pbr,'倍')}・配当利回り ${numOr(s.yld,'%','無配')}</div>
+      </div><div class="px"><div class="now">${pxf(s.price)}</div><div class="chg ${chg>=0?'up':'dn'}">前日比 ${sgn(chg,1)}%</div></div></div>
+      ${note?`<p class="ai">${esc(note)}</p>`:''}
+      ${ladder(s)}
+      <div class="levels">
+        <div class="lv entry"><div class="k">買い目安</div><div class="v">${fmt(L.entry)}</div><div class="p">現在値から ${sgn(-L.dip,1)}%</div></div>
+        <div class="lv stop"><div class="k">損切り</div><div class="v">${fmt(L.stop)}</div><div class="p">買値から −${fmt(L.risk,1)}%</div></div>
+        <div class="lv tp"><div class="k">利確1（半分）</div><div class="v">${fmt(L.tp1)}</div><div class="p">買値から +${fmt(L.tp1p,1)}%</div></div>
+        <div class="lv tp"><div class="k">利確2（残り）</div><div class="v">${fmt(L.tp2)}</div><div class="p">+${fmt(L.tp2p,1)}%${L.tp2cap?'・'+esc(L.tp2cap)+'手前':''}</div></div>
+      </div>
+      <div class="expect">
+        <div><div class="k">目標の利益率</div><div class="v up">+${fmt(L.avgp,1)}%</div><div class="s">利確1・2で半分ずつ売れた場合</div></div>
+        <div><div class="k">期待値（損切り込み）</div><div class="v">${sgn(s.ev,1)}%</div><div class="s">${evs}</div></div>
+        <div><div class="k">株数の目安</div><div class="s sz">${sizing(s)}</div></div>
+      </div>
+      ${earnBox(s.earnv)}
+      <dl class="facts">
+        <div><dt>買い残 ${s.rate_days}営業日</dt><dd class="dn">${sgn(s.rate,1)}%</dd></div>
+        <div><dt>買い残 約4週</dt><dd>${s.rate4==null?'—':sgn(s.rate4,1)+'%'}</dd></div>
+        <div><dt>買い残（株）</dt><dd>${fmt(s.buy0/10000,1)}万→${fmt(s.buy1/10000,1)}万</dd></div>
+        <div><dt>出来高何日分</dt><dd>${fmt(s.dc0,2)} → ${fmt(s.dc1,2)}日</dd></div>
+        <div><dt>信用倍率</dt><dd>${ratio}</dd></div>
+        <div><dt>値幅（ATR）</dt><dd>${fmt(s.atr,0)}円・${fmt(s.atrp,1)}%</dd></div>
+        <div><dt>RSI・25日線乖離</dt><dd>${fmt(s.rsi,0)}・${sgn(s.dev25,1)}%</dd></div>
+        <div><dt>売買代金/日</dt><dd>${fmt(s.val20,1)}億円</dd></div>
+        <div><dt>この型の検証</dt><dd>${s.group==='main'?'勝率59%':'勝率74%'}</dd></div>
+      </dl>
+      <div class="why"><div class="pro"><h4>上がると見る理由</h4><ul>${(s.pros||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+        <div class="con"><h4>注意点</h4><ul>${(s.cons||[]).map(t=>`<li>${esc(t)}</li>`).join('')||'<li>特になし</li>'}</ul></div></div>
+      <details data-code="${s.code}"><summary>チャート・信用残の推移・ニュースを見る</summary><div class="charts">
+        <div><div class="chart-t">株価（終値・直近60営業日）と売買ライン</div><div class="chart" data-k="px"></div></div>
+        <div><div class="chart-t">信用買い残の推移（日次・株）</div><div class="chart" data-k="mh"></div></div>
+        ${(s.news||[]).length?`<div><div class="chart-t">直近のニュース（株探）</div><ul class="news">${s.news.map(n=>`<li>${esc(n.t.slice(0,8))} ${esc(n.h)}</li>`).join('')}</ul></div>`:''}
+      </div></details>
+    </article>`;
+  }
+  function renderCards(ai){
+    if(!D)return;
+    let list=D.stocks.filter(s=>st.g==='all'||s.group===st.g);
+    if(st.hide)list=list.filter(s=>!(s.earnv&&s.earnv.bdEarn!=null&&s.earnv.bdEarn<=5));
+    const by={rec:(a,b)=>gradeRank[a.grade]-gradeRank[b.grade]||b.score-a.score,ev:(a,b)=>b.ev-a.ev,
+      earnP:(a,b)=>((b.earnv&&b.earnv.bdEarn!=null)?b.earnv.P:0)-((a.earnv&&a.earnv.bdEarn!=null)?a.earnv.P:0),rate:(a,b)=>a.rate-b.rate,risk:(a,b)=>a.lv.risk-b.lv.risk};
+    list=list.slice().sort(by[st.sort]||by.rec);
+    if(st.g==='all'&&st.sort==='rec')list.sort((a,b)=>(a.group===b.group?0:a.group==='main'?-1:1)||gradeRank[a.grade]-gradeRank[b.grade]||b.score-a.score);
+    $('cards').innerHTML=list.length?list.map(s=>card(s,ai)).join(''):'<div class="empty">この条件に合う銘柄は今回ありません。型の切り替えや「決算まで5営業日以内を隠す」を外して確認してください。</div>';
+    $('count').textContent=list.length+'銘柄を表示中（全'+fmt(D.meta.screened)+'銘柄 → 減少'+fmt(D.meta.universe)+' → 条件合格'+fmt(D.meta.passed)+'）';
+    document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.g===st.g)));
+    document.querySelectorAll('#cards details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)drawCharts(d)}));
+  }
+
+  // チャート
+  const NS='http://www.w3.org/2000/svg';
+  function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a){const v=a[k];if(typeof v==='string'&&v.startsWith('var('))e.style.setProperty(k,v);else e.setAttribute(k,v)}if(p)p.appendChild(e);return e}
+  function txt(p,x,y,s,a){const t=el('text',Object.assign({x,y,'font-size':11.5,fill:'var(--ink-3)','font-family':'IBM Plex Mono, monospace'},a||{}),p);t.textContent=s;return t}
+  function place(tip,box,x,y){tip.hidden=false;tip.style.top=y+'px';const bw=box.clientWidth,tw=tip.offsetWidth;tip.style.left=Math.min(Math.max(x,tw/2),Math.max(tw/2,bw-tw/2))+'px'}
+  function tipOf(box){let t=box.querySelector('.tip');if(!t){t=document.createElement('div');t.className='tip';t.hidden=true;box.appendChild(t)}return t}
+  function drawPrice(box,s){
+    box.innerHTML='';const W=Math.max(280,box.clientWidth),H=230,L=8,R=86,T=12,B=24,lv=s.lv;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,height:H,role:'img','aria-label':`${s.name}の直近60営業日の終値と売買ライン`},box);
+    const vals=s.close.concat([lv.stop,lv.tp2]);let lo=Math.min(...vals),hi=Math.max(...vals);const pad=(hi-lo)*0.06;lo-=pad;hi+=pad;
+    const n=s.close.length,x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+    for(let k=0;k<=3;k++){const yy=T+k*(H-T-B)/3;el('line',{x1:L,x2:W-R,y1:yy,y2:yy,stroke:'var(--line)','stroke-width':1},svg)}
+    el('rect',{x:L,width:W-L-R,y:y(lv.entry),height:Math.max(0,y(lv.stop)-y(lv.entry)),fill:'var(--bad)',opacity:.08},svg);
+    el('rect',{x:L,width:W-L-R,y:y(lv.tp2),height:Math.max(0,y(lv.entry)-y(lv.tp2)),fill:'var(--good)',opacity:.07},svg);
+    let ly=-99;[{k:'利確2',v:lv.tp2,c:'var(--good)'},{k:'利確1',v:lv.tp1,c:'var(--good)'},{k:'買い',v:lv.entry,c:'var(--accent)'},{k:'損切り',v:lv.stop,c:'var(--bad)'}].forEach(o=>{
+      const yy=y(o.v);el('line',{x1:L,x2:W-R,y1:yy,y2:yy,stroke:o.c,'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);const ty=Math.max(yy+4,ly+13);ly=ty;txt(svg,W-R+6,ty,o.k+' '+fmt(o.v),{fill:'var(--ink-2)'})});
+    let d='';s.close.forEach((v,i)=>{d+=(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)});
+    el('path',{d:d+`L${x(n-1)} ${H-B}L${x(0)} ${H-B}Z`,fill:'var(--series-soft)'},svg);
+    el('path',{d,fill:'none',stroke:'var(--series)','stroke-width':2,'stroke-linejoin':'round'},svg);
+    el('circle',{cx:x(n-1),cy:y(s.close[n-1]),r:4.5,fill:'var(--series)',stroke:'var(--surface)','stroke-width':2},svg);
+    [0,Math.floor(n/2),n-1].forEach(i=>txt(svg,x(i),H-6,s.dates[i],{'text-anchor':i===0?'start':i===n-1?'end':'middle'}));
+    const ch=el('line',{y1:T,y2:H-B,stroke:'var(--ink-3)','stroke-width':1,visibility:'hidden'},svg);
+    const dot=el('circle',{r:4.5,fill:'var(--series)',stroke:'var(--surface)','stroke-width':2,visibility:'hidden'},svg);
+    const hit=el('rect',{x:L,y:T,width:W-L-R,height:H-T-B,fill:'transparent'},svg),tip=tipOf(box);
+    const move=ev=>{const r=svg.getBoundingClientRect(),mx=(ev.clientX-r.left)*W/r.width;let i=Math.round((mx-L)/((W-L-R)/(n-1)));i=Math.max(0,Math.min(n-1,i));
+      ch.setAttribute('x1',x(i));ch.setAttribute('x2',x(i));ch.setAttribute('visibility','visible');dot.setAttribute('cx',x(i));dot.setAttribute('cy',y(s.close[i]));dot.setAttribute('visibility','visible');
+      tip.innerHTML=`${s.dates[i]}<br>終値 ${pxf(s.close[i])}円`;place(tip,box,x(i)*r.width/W,y(s.close[i])*r.height/H)};
+    const out=ev=>{if(ev&&ev.pointerType==='touch')return;ch.setAttribute('visibility','hidden');dot.setAttribute('visibility','hidden');tip.hidden=true};
+    hit.addEventListener('pointermove',move);hit.addEventListener('pointerdown',move);hit.addEventListener('pointerleave',out);
+  }
+  function drawMargin(box,s){
+    box.innerHTML='';const m=(s.mh||[]).filter(o=>o.b!=null),n=m.length;if(n<2){box.textContent='推移データなし';return}
+    const W=Math.max(280,box.clientWidth),H=160,L=8,R=8,T=22,B=24;
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,height:H,role:'img','aria-label':`${s.name}の信用買い残の推移`},box);
+    const mx=Math.max(...m.map(o=>o.b))*1.12,step=(W-L-R)/n,bw=Math.max(4,step-2),y=v=>T+(1-v/mx)*(H-T-B),tip=tipOf(box);
+    el('line',{x1:L,x2:W-R,y1:H-B,y2:H-B,stroke:'var(--line)','stroke-width':1},svg);
+    m.forEach((o,i)=>{const xx=L+i*step+1,yy=y(o.b);
+      el('path',{d:`M${xx} ${H-B}V${yy+4}Q${xx} ${yy} ${xx+4} ${yy}H${xx+bw-4}Q${xx+bw} ${yy} ${xx+bw} ${yy+4}V${H-B}Z`,fill:'var(--series)'},svg);
+      const hit=el('rect',{x:L+i*step,y:T-10,width:step,height:H-B-T+10,fill:'transparent'},svg);
+      const show=()=>{const r=svg.getBoundingClientRect();tip.innerHTML=`${o.d}<br>買い残 ${fmt(o.b)}株<br>売り残 ${fmt(o.s)}株`;place(tip,box,(xx+bw/2)*r.width/W,yy*r.height/H)};
+      hit.addEventListener('pointerenter',show);hit.addEventListener('pointerdown',show);hit.addEventListener('pointerleave',ev=>{if(ev.pointerType!=='touch')tip.hidden=true})});
+    const f=m[0],l=m[n-1];
+    txt(svg,L+step/2,y(f.b)-6,fmt(f.b/10000,1)+'万',{'text-anchor':'start',fill:'var(--ink-2)'});
+    txt(svg,L+(n-1)*step+step/2,y(l.b)-6,fmt(l.b/10000,1)+'万',{'text-anchor':'end',fill:'var(--ink-2)'});
+    txt(svg,L,H-6,f.d.slice(3),{'text-anchor':'start'});txt(svg,W-R,H-6,l.d.slice(3),{'text-anchor':'end'});
+  }
+  function drawCharts(d){const s=D.stocks.find(o=>o.code===d.dataset.code);if(!s)return;drawPrice(d.querySelector('[data-k=px]'),s);drawMargin(d.querySelector('[data-k=mh]'),s)}
+
+  document.addEventListener('pointerdown',e=>{if(!e.target.closest('.chart'))document.querySelectorAll('.tip').forEach(t=>{t.hidden=true})});
+  let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>document.querySelectorAll('#cards details[open]').forEach(drawCharts),150)});
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{st.g=b.dataset.g;store.set('g',st.g);renderCards(currentAi())}));
+  $('sort').addEventListener('change',e=>{st.sort=e.target.value;store.set('sort',st.sort);renderCards(currentAi())});
+  $('hideEarn').addEventListener('change',e=>{st.hide=e.target.checked;store.set('hide',st.hide);renderCards(currentAi())});
+  const upd=()=>{st.cap=+$('cap').value||0;st.risk=+$('riskPct').value||0;store.set('cap',st.cap);store.set('risk',st.risk);
+    document.querySelectorAll('#cards .card').forEach(c=>{const s=D&&D.stocks.find(o=>'c'+o.code===c.id),z=c.querySelector('.sz');if(s&&z)z.innerHTML=sizing(s)})};
+  $('cap').addEventListener('input',upd);$('riskPct').addEventListener('input',upd);
+  function currentAi(){return D&&NOTES&&NOTES.updated&&NOTES.updated.slice(0,10)===D.meta.updated.slice(0,10)?NOTES:null}
+  $('reload').addEventListener('click',load);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load()});
+  setInterval(load,5*60*1000);
+  load();
+})();
+</script>
+</body>
+</html>
