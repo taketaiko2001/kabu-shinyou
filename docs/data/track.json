@@ -115,5 +115,83 @@
 "tp1": 9875,
 "tp2": 10760,
 "status": "waiting"
+},
+{
+"id": "20261021_5161",
+"code": "5161",
+"name": "西川ゴム工業",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-21",
+"entry": 3505,
+"stop": 3380,
+"tp1": 3630,
+"tp2": 3755,
+"status": "waiting"
+},
+{
+"id": "20261021_9743",
+"code": "9743",
+"name": "丹青社",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-21",
+"entry": 1427,
+"stop": 1389,
+"tp1": 1464,
+"tp2": 1502,
+"status": "waiting"
+},
+{
+"id": "20261021_3608",
+"code": "3608",
+"name": "ＴＳＩホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-21",
+"entry": 1189,
+"stop": 1148,
+"tp1": 1230,
+"tp2": 1272,
+"status": "waiting"
+},
+{
+"id": "20261021_6859",
+"code": "6859",
+"name": "エスペック",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-10-21",
+"entry": 4185,
+"stop": 3935,
+"tp1": 4440,
+"tp2": 4690,
+"status": "waiting"
+},
+{
+"id": "20261021_2395",
+"code": "2395",
+"name": "新日本科学",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-10-21",
+"entry": 1415,
+"stop": 1341,
+"tp1": 1488,
+"tp2": 1519,
+"status": "waiting"
+},
+{
+"id": "20261021_6376",
+"code": "6376",
+"name": "日機装",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-21",
+"entry": 3155,
+"stop": 2873,
+"tp1": 3440,
+"tp2": 3725,
+"status": "waiting"
 }
 ]
