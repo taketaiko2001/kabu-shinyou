@@ -163,6 +163,10 @@ input[type=number]{width:150px;font-family:var(--f-num)}
 .why h4{font-size:13px;font-weight:700}
 .why .pro h4{color:var(--good)} .why .con h4{color:var(--bad)}
 .ai{font-size:13.5px;color:var(--ink-2);border-left:3px solid var(--accent);padding-left:10px}
+.ai .pill{margin-right:6px}
+.vw-買い候補{background:var(--good-soft);color:var(--good)}
+.vw-慎重{background:var(--warn-soft);color:var(--warn)}
+.vw-見送り{background:var(--bad-soft);color:var(--bad)}
 details{border-top:1px solid var(--line);padding-top:10px}
 summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent)}
 .charts{display:grid;gap:14px;margin-top:12px}
@@ -298,6 +302,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       <li><b>時間切れ</b>：20営業日たっても届かなければ残りも売る。</li>
       <li><b>決算</b>：カードの「決算予想」の対応に従う。上がる確率が60%以上ならまたいでよい、42%以下なら前日までに全部売る、その間は半分以上を売る。決算の窓開けは逆指値では防げない。</li>
       <li><b>株数</b>：損切り時の損失が資金の1%程度に収まる株数にする。</li>
+      <li><b>AIの見立て</b>：計算結果をAI（Claude）がニュースやデータの欠けと照らして点検した判断です。「買い候補」は計算どおり、「慎重」は株数を減らすか様子を見る、「見送り」は今回は買わない。価格や確率の数字は変えません。</li>
     </ol>
   </section>
 
@@ -401,13 +406,14 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     const ratio=(s.ratio0==null?'—':fmt(s.ratio0,1))+' → '+(s.ratio1==null?'—':fmt(s.ratio1,1))+'倍';
     const evs=`値動き分 ${sgn(s.ev_tech,1)}%`+(Math.abs(s.ev_earn)>=0.05?`・決算分 ${sgn(s.ev_earn,1)}%`:'');
     const note=ai&&ai.stocks&&ai.stocks[s.code];
+    const vw=ai&&ai.views&&['買い候補','慎重','見送り'].includes(ai.views[s.code])?ai.views[s.code]:'';
     return `<article class="card" id="c${s.code}">
       <div class="card-head"><div>
         <div class="tags"><span class="pill g-${s.grade}">${s.grade}</span><span class="pill t-${s.group}">${typ}</span><span class="pill v-${volClass(s.atrp)}">値動き${volClass(s.atrp)}</span></div>
         <div><span class="code">${s.code}</span><span class="name">${esc(s.name)}</span></div>
         <div class="sector">${esc(s.sector||'')}・${esc(s.mkt)}・PER ${numOr(s.per,'倍')}・PBR ${numOr(s.pbr,'倍')}・配当利回り ${numOr(s.yld,'%','無配')}</div>
       </div><div class="px"><div class="now">${pxf(s.price)}</div><div class="chg ${chg>=0?'up':'dn'}">前日比 ${sgn(chg,1)}%</div></div></div>
-      ${note?`<p class="ai">${esc(note)}</p>`:''}
+      ${note||vw?`<p class="ai">${vw?`<span class="pill vw-${vw}">AIの見立て：${vw}</span>`:''}${esc(note||'')}</p>`:''}
       ${ladder(s)}
       <div class="levels">
         <div class="lv entry"><div class="k">買い目安</div><div class="v">${fmt(L.entry)}</div><div class="p">現在値から ${sgn(-L.dip,1)}%</div></div>
