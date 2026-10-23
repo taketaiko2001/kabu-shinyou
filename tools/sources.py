@@ -164,14 +164,39 @@ def prices(codes, period="2y"):
     return out
 
 
+def kabutan_index_recent():
+    """株探の日経平均の日足（直近30日ほど・場中は当日分も）。Yahoo の抜け・古さを補う。"""
+    html = get("https://kabutan.jp/stock/kabuka?code=0000")
+    if not html:
+        return None
+    rows = []
+    for tr in BeautifulSoup(html, "html.parser").select("table tr"):
+        cells = [c.get_text(strip=True) for c in tr.select("th,td")]
+        if len(cells) >= 5 and re.match(r"^\d{2}/\d{2}/\d{2}$", cells[0]):
+            o, h, l, c = (num(x) for x in cells[1:5])
+            if c:
+                rows.append(dict(Date=pd.Timestamp("20" + cells[0].replace("/", "-")), Open=o, High=h, Low=l, Close=c))
+    if not rows:
+        return None
+    return pd.DataFrame(rows).drop_duplicates("Date").set_index("Date").sort_index()
+
+
 def index_n225(period="2y"):
+    """日経平均の日足。長い履歴は Yahoo、直近は株探で上書き・補完する（Yahoo は行の抜けや古い値が出ることがある）。"""
     import yfinance as yf
     try:
         d = yf.download("^N225", period=period, interval="1d", auto_adjust=False, progress=False, threads=False, timeout=20)
         d.columns = [c[0] if isinstance(c, tuple) else c for c in d.columns]
-        return d.dropna(subset=["Close"])
+        d = d.dropna(subset=["Close"])[["Open", "High", "Low", "Close"]]
+        d.index = pd.DatetimeIndex(d.index).tz_localize(None).normalize()
     except Exception:
+        d = None
+    if d is None or len(d) < 200:
         return None
+    k = kabutan_index_recent()
+    if k is not None:
+        d = pd.concat([d[~d.index.isin(k.index)], k]).sort_index()
+    return d
 
 
 # ---------------------------------------------------------------- 株探

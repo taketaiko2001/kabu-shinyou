@@ -223,7 +223,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     <div><span class="lab">日経平均</span><span class="val" id="mN">—</span><span class="sub" id="mNs"></span></div>
     <div><span class="lab">市場全体の信用買い残</span><span class="val" id="mB">—</span><span class="sub" id="mBs"></span></div>
     <div><span class="lab">信用倍率（金額・2市場）</span><span class="val" id="mR">—</span><span class="sub" id="mRs"></span></div>
-    <div class="stop"><span class="lab">新規買いを止めるライン</span><span class="val" id="mL">—</span><span class="sub">日経平均の終値がここ（直近10日の安値）を割ったら、新しい買いは見送る</span></div>
+    <div class="stop"><span class="lab">新規買いを止めるライン</span><span class="val" id="mL">—</span><span class="sub" id="mLs">日経平均の終値がここ（直近10日の安値）を割ったら、新しい買いは見送る</span></div>
   </section>
 
   <section class="controls" aria-label="絞り込みと資金設定">
@@ -357,6 +357,8 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     if(t.buy_shares){$('mB').textContent=fmt(t.buy_shares/100000,2)+'億株';$('mBs').textContent=t.date.slice(4,6)+'/'+t.date.slice(6)+'時点・前週比 '+sgn(t.buy_chg/t.buy_shares*100,1)+'%（'+fmt(t.buy_val/1000000,2)+'兆円）';
       $('mR').textContent=fmt(t.ratio,2)+'倍';$('mRs').textContent=t.ratio>=8?'買いが多く、相場全体の上値は重い':t.ratio<=4?'買いは軽く、上値は軽い':'買いと売りは平常の範囲';}
     $('mL').textContent=fmt(Math.floor(k.stop_line/100)*100)+'円';
+    const gapL=(k.n225/k.stop_line-1)*100;
+    $('mLs').innerHTML=(gapL<0?'<b class="dn">いまは割れています（'+sgn(gapL,1)+'%）。新しい買いは日経平均がこのラインを回復するまで見送り。</b> ':'日経平均はこのラインの '+sgn(gapL,1)+'% 上。')+'終値が直近10日の安値を割ったら、新しい買いは見送ります。';
     const ai=NOTES&&NOTES.updated&&NOTES.updated.slice(0,10)===m.updated.slice(0,10)?NOTES:null;
     $('aiMarket').hidden=!(ai&&ai.market); if(ai&&ai.market)$('aiMarket').querySelector('p').textContent=ai.market;
     renderCards(ai);

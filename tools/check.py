@@ -53,7 +53,7 @@ def warnings(d):
     md = datetime.strptime(m["margin_date"], "%Y%m%d").date()
     if bdays_between(md, today) > 4:
         out.append(f"信用残の日付が古い（{md:%m/%d}申込分）")
-    pd_ = datetime.strptime(m["price_asof"], "%Y-%m-%d").date()
+    pd_ = datetime.strptime(m["price_asof"][:10], "%Y-%m-%d").date()
     if bdays_between(pd_, today) > 1:
         out.append(f"株価の日付が古い（{pd_:%m/%d}）")
     ps = picks(d)
@@ -67,6 +67,7 @@ def warnings(d):
     no_fin = [s for s in near if s["earnv"].get("prog") is None and s["earnv"].get("prev_yoy") is None]
     if near and len(no_fin) * 2 > len(near):
         out.append(f"業績（株探）が{len(no_fin)}/{len(near)}銘柄で取れていない")
+    out += list(m.get("warn") or [])
     if m.get("excluded"):
         out.append("異常な日の信用残を除外: " + ", ".join(m["excluded"]))
     if k["n225"] < k["stop_line"]:
@@ -74,10 +75,31 @@ def warnings(d):
     return out
 
 
+def flags(s):
+    """見立ての基準（CLAUDE.md）に機械的に当たる点。最終判断は見立てを書く側が行う。"""
+    e, out = s.get("earnv") or {}, []
+    bd, hold, P, tu = e.get("bdEarn"), e.get("hold"), e.get("P"), e.get("target_up")
+    if bd is not None and bd <= 10 and hold is not None and hold < 1:
+        out.append(f"決算まで{bd}営業日で、決算前に売る判定（値幅を取れる期間が短い）")
+    if bd is not None and P is not None and P <= 45:
+        out.append(f"決算で上がる確率{P}%（45%以下）")
+    if bd is not None and e.get("prog") is None and e.get("prev_yoy") is None:
+        out.append("業績データが取れていない")
+    if tu is not None and tu >= 60:
+        out.append(f"目標株価まで+{tu:.0f}%は大きすぎる（株式分割前の古い目標株価などデータの誤りの可能性）")
+    elif tu is not None and tu < 0:
+        out.append(f"株価が目標株価を{-tu:.0f}%上回っている")
+    if s["ev"] < 0.8 and e.get("gap") is not None and e["gap"] <= -10:
+        out.append("進捗が前年同期より遅れ、期待値も小さい")
+    if s["val20"] < 5:
+        out.append(f"売買代金が1日{s['val20']:.1f}億円と少ない（買い候補なら株数控えめ）")
+    return out
+
+
 def report(d):
     m, k = d["meta"], d["market"]
     print(f"更新: {m['updated']}（{m['slot']}） 信用残 {m['margin_date']} 株価 {m['price_asof']}")
-    print(f"日経平均 {k['n225']:,.0f}  停止ライン {k['stop_line']:,.0f}（余裕 {(k['n225'] / k['stop_line'] - 1) * 100:+.1f}%）")
+    print(f"日経平均 {k['n225']:,.0f}（{k.get('n225_asof', '?')}）  停止ライン {k['stop_line']:,.0f}（余裕 {(k['n225'] / k['stop_line'] - 1) * 100:+.1f}%）")
     w = warnings(d)
     print("点検: " + ("問題なし" if not w else " / ".join(w)))
     print()
@@ -88,6 +110,9 @@ def report(d):
               f"現{s['price']:,.0f} 買{L['entry']:,} 損{L['stop']:,} 利{L['tp1']:,}/{L['tp2']:,} 期待値{s['ev']:+.1f}% "
               f"RSI{s['rsi']:.0f} 25日線乖離{s['dev25']:+.1f}% 売買代金{s['val20']:.1f}億")
         print("   " + earn)
+        fl = flags(s)
+        if fl:
+            print("   基準に当たる点: " + " / ".join(fl))
         for f in e.get("factors") or []:
             print(f"   {'＋' if f['s'] > 0 else '－' if f['s'] < 0 else '・'}{f['t']}")
         for n in (s.get("news") or [])[:4]:
@@ -115,14 +140,16 @@ def push(d, notes):
     when = datetime.strptime(m["updated"], "%Y-%m-%d %H:%M")
     k = d["market"]
     w = warnings(d)
-    head = ("【要確認】" if any("取れていない" in x or "古い" in x for x in w) else "") + f"株予想 {when:%m/%d %H:%M}"
+    head = (("【要確認】" if any("取れていない" in x or "古い" in x for x in w) else "")
+            + ("【新規買い停止中】" if k["n225"] < k["stop_line"] else "") + f"株予想 {when:%m/%d %H:%M}")
     buy = sorted([s for s in ps if views[s["code"]] == "買い候補"], key=lambda s: (s["grade"] != "本命", -s["ev"]))
     items = [f"{s['code']} {short(s['name'])} 買{s['lv']['entry']} 損{s['lv']['stop']} 利{s['lv']['tp1']}" for s in buy]
     cnt = {v: sum(1 for s in ps if views[s["code"]] == v) for v in VIEWS}
     tail = f"慎重{cnt['慎重']}・見送り{cnt['見送り']}｜日経 停止線まで{(k['n225'] / k['stop_line'] - 1) * 100:+.1f}%"
+    lab = "回復待ちの候補" if k["n225"] < k["stop_line"] else "買い候補"
     for n in range(min(3, len(items)), -1, -1):
-        body = ("買い候補: " + "／".join(items[:n]) + (f" ほか{len(items) - n}" if len(items) > n else "")) if n else (
-            "買い候補なし" if not items else f"買い候補{len(items)}銘柄")
+        body = (f"{lab}: " + "／".join(items[:n]) + (f" ほか{len(items) - n}" if len(items) > n else "")) if n else (
+            f"{lab}なし" if not items else f"{lab}{len(items)}銘柄")
         msg = f"{head} {body}｜{tail}"
         if len(msg) <= 190:
             print(msg)

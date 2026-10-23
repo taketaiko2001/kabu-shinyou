@@ -11,6 +11,7 @@ import json
 import os
 import re
 import sys
+import warnings
 from datetime import datetime, timedelta, timezone
 
 import numpy as np
@@ -19,6 +20,8 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import model as M  # noqa: E402
 import sources as S  # noqa: E402
+
+warnings.filterwarnings("ignore")   # yfinance/pandas の大量の警告で出力が埋まるのを防ぐ
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "docs", "data")
@@ -309,6 +312,13 @@ def main(force=False):
         return 1
     last_bar = max(x.index[-1] for x in px.values())
     partial = (pd.Timestamp(last_bar).normalize() == TODAY) and (NOW.hour < 15 or (NOW.hour == 15 and NOW.minute < 30))
+    if partial and slot == "寄り付き前":   # 手動で場中に動かしたとき
+        slot = "場中"
+    warn = []
+    n_last = pd.Timestamp(n225.index[-1]).normalize()
+    if n_last < pd.Timestamp(last_bar).normalize():
+        warn.append(f"日経平均が{n_last:%m/%d}までしか取れていない（株価は{pd.Timestamp(last_bar):%m/%d}）")
+        print("注意: " + warn[-1])
 
     rows = []
     for code5, m in uni.iterrows():
@@ -398,7 +408,7 @@ def main(force=False):
     mk = S.jpx_market_total()
     lows = n225.Low.iloc[-11:-1] if partial else n225.Low.iloc[-10:]
     market = dict(n225=float(n225c.iloc[-1]), n225_prev=float(n225c.iloc[-2]), n225_hi20=float(n225c.iloc[-20:].max()),
-                  stop_line=float(lows.min()), total=mk)
+                  stop_line=float(lows.min()), n225_asof=f"{n_last:%Y-%m-%d}", total=mk)
 
     # 6. 成績の記録
     log, summ = update_track(final, px)
@@ -406,7 +416,7 @@ def main(force=False):
     meta = dict(updated=NOW.strftime("%Y-%m-%d %H:%M"), slot=slot, margin_date=date_t, margin_from=f"{d_from:%Y%m%d}",
                 rate_days=rate_days, price_asof=f"{pd.Timestamp(last_bar):%Y-%m-%d}" + ("（場中）" if partial else ""),
                 screened=len(df), universe=len(uni), passed=len(rows), studied=len(picks),
-                ev_atr=M.EV_ATR, snap_4w=snap_date or "", excluded=bad)
+                ev_atr=M.EV_ATR, snap_4w=snap_date or "", excluded=bad, warn=warn)
     keep = ("code name mkt sector desc per pbr yld group grade score price prev atr atrp rate rate_days rate4 rate4_src pchg rs rsi dev25 "
             "ma25 ma75 ma200 up above200 buy0 buy1 sell0 sell1 ratio0 ratio1 dc0 dc1 val20 lv earnv ev ev_tech ev_earn "
             "pros cons news mh dates close").split()
@@ -419,7 +429,8 @@ def main(force=False):
         json.dump(clean(log), f, ensure_ascii=False, indent=0)
 
     # 7. ルーティン用の要約（標準出力）
-    print(f"更新: {meta['updated']}（{slot}）株価 {meta['price_asof']} / 日経平均 {market['n225']:,.0f}")
+    print(f"更新: {meta['updated']}（{slot}）株価 {meta['price_asof']} / 日経平均 {market['n225']:,.0f}（{n_last:%m/%d}）"
+          f" 停止ライン {market['stop_line']:,.0f}")
     for r in final:
         e = r["earnv"]
         print(f"[{r['group']}/{r['grade']}] {r['code']} {r['name'][:10]} 現{r['price']:,.0f} 買{r['lv']['entry']:,} "
