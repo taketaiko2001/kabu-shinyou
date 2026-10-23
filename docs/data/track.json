@@ -36,7 +36,11 @@
 "stop": 557,
 "tp1": 608,
 "tp2": 633,
-"status": "waiting"
+"status": "open",
+"fill_date": "2026-10-22",
+"fill": 582.0,
+"pnl": -0.26,
+"note": "保有中"
 },
 {
 "id": "20261021_4431",
@@ -65,7 +69,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 2790.0,
-"pnl": -0.14,
+"pnl": -2.11,
 "note": "保有中"
 },
 {
@@ -92,7 +96,11 @@
 "stop": 702,
 "tp1": 798,
 "tp2": 846,
-"status": "waiting"
+"status": "open",
+"fill_date": "2026-10-22",
+"fill": 750.0,
+"pnl": 0.4,
+"note": "保有中"
 },
 {
 "id": "20261021_6998",
@@ -108,7 +116,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 3295.0,
-"pnl": -2.28,
+"pnl": -3.79,
 "note": "保有中"
 },
 {
@@ -125,7 +133,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 8985.0,
-"pnl": -1.06,
+"pnl": -3.95,
 "note": "保有中"
 },
 {
@@ -139,7 +147,11 @@
 "stop": 3380,
 "tp1": 3630,
 "tp2": 3755,
-"status": "waiting"
+"status": "open",
+"fill_date": "2026-10-22",
+"fill": 3505.0,
+"pnl": -0.29,
+"note": "保有中"
 },
 {
 "id": "20261021_9743",
@@ -168,7 +180,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 1189.0,
-"pnl": -0.84,
+"pnl": -1.77,
 "note": "保有中"
 },
 {
@@ -211,7 +223,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 3155.0,
-"pnl": -1.74,
+"pnl": -3.65,
 "note": "保有中"
 },
 {
@@ -225,6 +237,136 @@
 "stop": 2110,
 "tp1": 2321,
 "tp2": 2426,
+"status": "waiting"
+},
+{
+"id": "20261023_7199",
+"code": "7199",
+"name": "プレミアグループ",
+"group": "main",
+"grade": "本命",
+"created": "2026-10-23",
+"entry": 2149,
+"stop": 2076,
+"tp1": 2224,
+"tp2": 2260,
+"status": "waiting"
+},
+{
+"id": "20261023_4521",
+"code": "4521",
+"name": "科研製薬",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 3840,
+"stop": 3765,
+"tp1": 3920,
+"tp2": 3995,
+"status": "waiting"
+},
+{
+"id": "20261023_5032",
+"code": "5032",
+"name": "ＡＮＹＣＯＬＯＲ",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 3125,
+"stop": 2987,
+"tp1": 3265,
+"tp2": 3325,
+"status": "waiting"
+},
+{
+"id": "20261023_4559",
+"code": "4559",
+"name": "ゼリア新薬工業",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 1997,
+"stop": 1957,
+"tp1": 2037,
+"tp2": 2077,
+"status": "waiting"
+},
+{
+"id": "20261023_4107",
+"code": "4107",
+"name": "伊勢化学工業",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 3830,
+"stop": 3605,
+"tp1": 4065,
+"tp2": 4290,
+"status": "waiting"
+},
+{
+"id": "20261023_4751",
+"code": "4751",
+"name": "サイバーエージェント",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 1285,
+"stop": 1242,
+"tp1": 1328,
+"tp2": 1370,
+"status": "waiting"
+},
+{
+"id": "20261023_8715",
+"code": "8715",
+"name": "アニコム ホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 1072,
+"stop": 1018,
+"tp1": 1127,
+"tp2": 1181,
+"status": "waiting"
+},
+{
+"id": "20261023_5892",
+"code": "5892",
+"name": "ｙｕｔｏｒｉ",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 2550,
+"stop": 2302,
+"tp1": 2799,
+"tp2": 3045,
+"status": "waiting"
+},
+{
+"id": "20261023_8361",
+"code": "8361",
+"name": "大垣共立銀行",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 1505,
+"stop": 1399,
+"tp1": 1612,
+"tp2": 1718,
+"status": "waiting"
+},
+{
+"id": "20261023_7966",
+"code": "7966",
+"name": "リンテック",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-23",
+"entry": 5130,
+"stop": 4750,
+"tp1": 5515,
+"tp2": 5900,
 "status": "waiting"
 }
 ]
