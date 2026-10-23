@@ -327,16 +327,34 @@ def rule_swing(pf, t, dry, out, B):
 
 def probe():
     """GitHub Actions などから、株価（Yahoo）と株探（PTS）が取れるかだけ確かめる。"""
+    import sources as S
+    gh = bool(os.environ.get("GITHUB_ACTIONS"))
+
+    def note(s):            # GitHub Actions では注記（annotation）にも出す（ログを見る権限がなくても読める）
+        print(("::notice::" if gh else "") + s)
     ok = True
-    x = T.bars(["7203"]).get("7203")
-    print("Yahoo 1分足:", "取れない" if x is None or not len(x) else f"{len(x)}本・最後 {x.index[-1]:%m/%d %H:%M}")
-    ok &= x is not None and len(x) > 0
-    d = T.daily(["7203"]).get("7203")
-    print("Yahoo 日足:", "取れない" if d is None or not len(d) else f"最後 {d.index[-1]:%m/%d} 終値 {float(d.Close.iloc[-1]):,.1f}")
-    ok &= d is not None and len(d) > 0
-    q = pts("7203")
-    print("株探 PTS:", q if q else "取れない")
-    ok &= bool(q)
+    try:
+        x = T.bars(["7203"]).get("7203")
+        note("Yahoo 1分足: " + ("取れない" if x is None or not len(x) else f"{len(x)}本・最後 {x.index[-1]:%m/%d %H:%M}"))
+        ok &= x is not None and len(x) > 0
+    except Exception as e:
+        note(f"Yahoo 1分足: エラー {type(e).__name__}: {e}"[:300])
+        ok = False
+    try:
+        d = T.daily(["7203"]).get("7203")
+        note("Yahoo 日足: " + ("取れない" if d is None or not len(d) else f"最後 {d.index[-1]:%m/%d} 終値 {float(d.Close.iloc[-1]):,.1f}"))
+        ok &= d is not None and len(d) > 0
+    except Exception as e:
+        note(f"Yahoo 日足: エラー {type(e).__name__}: {e}"[:300])
+        ok = False
+    try:
+        h = S.get("https://kabutan.jp/stock/?code=7203")
+        q = pts("7203")
+        note(f"株探: ページ {'取れた（' + str(len(h)) + '文字）' if h else '取れない'}・PTS {q if q else '取れない'}")
+        ok &= bool(q)
+    except Exception as e:
+        note(f"株探: エラー {type(e).__name__}: {e}"[:300])
+        ok = False
     return 0 if ok else 1
 
 
