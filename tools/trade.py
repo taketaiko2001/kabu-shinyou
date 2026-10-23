@@ -1,12 +1,17 @@
-"""仮想売買（ペーパートレード）の記録と計算。実際の発注は一切しない。記録は docs/data/portfolio.json。
+"""仮想売買（ペーパートレード）の記録と計算。実際の発注は一切しない。
+作業用の記録は data/trade/portfolio.json（1時間ごとの確認でも書き換える）。スマホのページが読むのは
+docs/data/portfolio.json で、9:00・12:30・15:30の更新で publish したときだけ書き換わる。
 
-  python3 tools/trade.py status                          … 約定・損切り・引け決済・期限を処理し、口座と保有を表示して保存
+  python3 tools/trade.py status [--wait-close]           … 約定・損切り・引け決済・期限を処理し、口座と保有を表示して保存
+                                                          （--wait-close: 今日のデイトレードの大引け値が出るまで最大12分待つ）
   python3 tools/trade.py buy  口座 コード 株数 "理由" [--stop 価格] [--tp1 価格] [--tp2 価格]
   python3 tools/trade.py sell 口座 コード 株数|all "理由"
   python3 tools/trade.py stop 口座 コード 価格 "理由"       … 損切りライン（逆指値）を変える。0 で外す
   python3 tools/trade.py cancel 注文ID "理由"               … 約定待ちの注文を取り消す
-  python3 tools/trade.py day                             … デイトレードの判断材料（後場の始まりに使う）
   python3 tools/trade.py memo "文"                        … ページに出すトレーダーのメモ
+  python3 tools/trade.py publish                         … 作業用の記録をスマホのページ用にコピーする
+  python3 tools/trade.py settle                          … 大引け後の精算（GitHub Actions 用）
+機械的な売買ルール（デイトレードの朝・後場、スイング）は tools/auto.py、デイトレードの検証は tools/daylab.py。
 
 口座は day（デイトレード）・swing（スイング）・long（長期保有）。元金は各100万円で、口座の間でお金を移さない。
 約定の決め方（後から実際の値動きで確かめるので、都合のよい値は使えない）:
@@ -34,15 +39,15 @@ except Exception:
     pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PF = os.path.join(ROOT, "docs", "data", "portfolio.json")
+PF = os.path.join(ROOT, "data", "trade", "portfolio.json")        # 作業用
+PUB = os.path.join(ROOT, "docs", "data", "portfolio.json")        # スマホのページ用（publish で更新）
 LATEST = os.path.join(ROOT, "docs", "data", "latest.json")
 JST = timezone(timedelta(hours=9))
 CAPITAL = 1_000_000
 ACCTS = {"day": "デイトレード", "swing": "スイング", "long": "長期保有"}
-CAP = {"day": 1, "swing": 2, "long": 2}     # 同時に持つ銘柄数の上限（合計5）
+CAP = {"day": 5, "swing": 5, "long": 5}     # 同時に持つ銘柄数の上限（口座ごと。市原さんの決定 2026-10-23）
 BUF = 1.05                                  # 約定前の成行買いは、見積もり×1.05の現金を確保しておく
-DAY_STOP = 0.03                             # デイトレードの損切り（買値−3%）
-DAY_MKT = 0.003                             # デイトレードの条件：市場（1306）の前場が+0.3%以上
+DAY_STOP = 0.03                             # デイトレードの損切り（指定がないとき、買値−3%）
 TFMT = "%Y-%m-%d %H:%M:%S"
 
 # デイトレードの対象（売買代金の多い大型・主力株）。検証（2026/7/27〜10/22）も同じ銘柄で行った
@@ -215,15 +220,24 @@ def new_pf():
 
 
 def load():
-    if not os.path.exists(PF):
-        return new_pf()
-    with open(PF, encoding="utf-8") as f:
-        return json.load(f)
+    for f in (PF, PUB):               # 作業用が無いとき（初回）はページ用から始める
+        if os.path.exists(f):
+            with open(f, encoding="utf-8") as fh:
+                return json.load(fh)
+    return new_pf()
 
 
 def save(pf):
+    os.makedirs(os.path.dirname(PF), exist_ok=True)
     with open(PF, "w", encoding="utf-8") as f:
         json.dump(pf, f, ensure_ascii=False, indent=1)
+
+
+def publish(pf):
+    q = dict(pf, published=now().strftime("%Y-%m-%d %H:%M"))
+    with open(PUB, "w", encoding="utf-8") as f:
+        json.dump(q, f, ensure_ascii=False, indent=1)
+    return q["published"]
 
 
 def nid(pf, k):
@@ -254,7 +268,7 @@ def fill_buy(pf, o, px, t):
     p = next((p for p in pf["positions"] if p["acct"] == o["acct"] and p["code"] == o["code"]), None)
     stop = o.get("stop")
     if o["acct"] == "day" and not stop:
-        stop = math.floor(px * (1 - DAY_STOP) / tick(px)) * tick(px)
+        stop = math.floor(px * (1 - (o.get("stop_pct") or DAY_STOP)) / tick(px)) * tick(px)
     if p:
         p["avg"] = round((p["avg"] * p["shares"] + px * sh) / (p["shares"] + sh), 2)
         p["shares"] += sh
@@ -263,16 +277,18 @@ def fill_buy(pf, o, px, t):
     else:
         d = pd.Timestamp(t).date()
         p = dict(id=nid(pf, "P"), acct=o["acct"], code=o["code"], name=o["name"], shares=sh, avg=px, opened=tstr(t),
-                 stop=stop, tp1=o.get("tp1"), tp2=o.get("tp2"), reason=o["reason"], checked=tstr(pd.Timestamp(t) - pd.Timedelta(seconds=1)),
+                 stop=stop, tp1=o.get("tp1"), tp2=o.get("tp2"), rule=o.get("rule"), earn=o.get("earn"), hold=o.get("hold"),
+                 reason=o["reason"], checked=tstr(pd.Timestamp(t) - pd.Timedelta(seconds=1)),
                  deadline=(d.strftime("%Y-%m-%d") if o["acct"] == "day" else
                            trading_on_or_before(add_month(d)).strftime("%Y-%m-%d") if o["acct"] == "swing" else None))
         pf["positions"].append(p)
     log(pf, kind="buy", acct=o["acct"], code=o["code"], name=o["name"], shares=sh, price=px, t=tstr(t),
-        order_t=o["time"], reason=o["reason"])
+        order_t=o["time"], reason=o["reason"], rule=o.get("rule"))
 
 
 KIND = {"sell": "成行で売り", "stop": "逆指値で損切り", "close_day": "大引けで決済（デイトレード）",
-        "close_swing": "大引けで決済（1か月の期限）"}
+        "close_swing": "大引けで決済（1か月の期限）", "tp1": "利確1に到達して成行で売り", "tp2": "利確2に到達して成行で売り",
+        "time": "期間切れで成行で売り", "earn": "決算の前に成行で売り"}
 
 
 def fill_sell(pf, p, sh, px, t, kind, o=None):
@@ -282,9 +298,11 @@ def fill_sell(pf, p, sh, px, t, kind, o=None):
     reason = o["reason"] if o else {"stop": f"損切りライン{p['stop']:,}円に到達",
                                      "close_day": "その日のうちに手じまうルール",
                                      "close_swing": "保有期間の上限（1か月）"}.get(kind, "")
+    if o and o.get("how"):
+        kind = o["how"]
     log(pf, kind="sell", how=KIND[kind], acct=p["acct"], code=p["code"], name=p["name"], shares=sh, price=px,
         avg=p["avg"], pnl=round(pnl), pnl_pct=round((px / p["avg"] - 1) * 100, 2), t=tstr(t),
-        order_t=o["time"] if o else None, reason=reason, opened=p["opened"])
+        order_t=o["time"] if o else None, reason=reason, opened=p["opened"], rule=p.get("rule"))
     p["shares"] -= sh
     if o:
         pf["orders"].remove(o)
@@ -456,9 +474,12 @@ def show(pf):
 
 
 # ---------------------------------------------------------------- 注文
+class TradeError(Exception):
+    pass
+
+
 def err(msg):
-    print("ERROR: " + msg, file=sys.stderr)
-    sys.exit(1)
+    raise TradeError(msg)
 
 
 def latest_price(code):
@@ -469,7 +490,8 @@ def latest_price(code):
     return float(x.Close.iloc[-1]), x.index[-1]
 
 
-def cmd_buy(pf, acct, code, shares, reason, stop=None, tp1=None, tp2=None):
+def cmd_buy(pf, acct, code, shares, reason, stop=None, tp1=None, tp2=None, rule=None, stop_pct=None,
+            earn=None, hold=None, est=None, name=None, quiet=False):
     t = now()
     if acct not in ACCTS:
         err("口座は day / swing / long のどれか")
@@ -481,14 +503,16 @@ def cmd_buy(pf, acct, code, shares, reason, stop=None, tp1=None, tp2=None):
         err("理由を書く")
     if not is_trading(t.date()):
         err("今日は休場日")
-    if acct == "day" and not ((9, 0) <= (t.hour, t.minute) < (14, 30)):
-        err("デイトレードの買いは 9:00〜14:30 だけ（その日の大引けで決済するため）")
+    if acct == "day" and not ((8, 25) <= (t.hour, t.minute) < (14, 30)):
+        err("デイトレードの買いは 8:25〜14:30 だけ（9:00前の注文は寄り付きで約定。その日の大引けで決済するため）")
     held = {p["code"] for p in pf["positions"] if p["acct"] == acct} | {o["code"] for o in pf["orders"] if o["acct"] == acct and o["side"] == "buy"}
     if code not in held and len(held) >= CAP[acct]:
         err(f"{ACCTS[acct]}は同時に{CAP[acct]}銘柄まで（全体で5銘柄まで）")
     if acct == "day" and any(x["kind"] == "sell" and x["acct"] == "day" and x["code"] == code and x["t"][:10] == t.strftime("%Y-%m-%d") for x in pf["trades"]):
         err("同じ日に同じ銘柄を買い直さない（現物の差金決済にあたるため）")
-    est, et = latest_price(code)
+    et = None
+    if est is None:
+        est, et = latest_price(code)
     if est is None:
         err("株価が取れない")
     a = pf["accounts"][acct]
@@ -499,14 +523,18 @@ def cmd_buy(pf, acct, code, shares, reason, stop=None, tp1=None, tp2=None):
         err(f"現金が足りない（必要の見積もり {need:,.0f}円 > 使える現金 {free:,.0f}円）。買えるのは {mx}株まで")
     if stop is not None and stop >= est:
         err(f"損切りライン {stop} が現在値 {est} 以上")
-    o = dict(id=nid(pf, "O"), acct=acct, side="buy", code=code, name=name_of(code), shares=shares,
-             time=t.strftime(TFMT), est=round(est, 1), stop=stop, tp1=tp1, tp2=tp2, reason=reason.strip())
+    o = dict(id=nid(pf, "O"), acct=acct, side="buy", code=code, name=name or name_of(code), shares=shares,
+             time=t.strftime(TFMT), est=round(est, 1), stop=stop, tp1=tp1, tp2=tp2, rule=rule, stop_pct=stop_pct,
+             earn=earn, hold=hold, reason=reason.strip())
     pf["orders"].append(o)
-    log(pf, kind="order", acct=acct, side="buy", code=code, name=o["name"], shares=shares, reason=o["reason"], t=o["time"])
-    print(f"注文 {o['id']}: [{ACCTS[acct]}] {code} {o['name']} {shares}株 成行買い（見積もり {est:,.1f}円・{pd.Timestamp(et).strftime('%H:%M')}の値）")
+    log(pf, kind="order", acct=acct, side="buy", code=code, name=o["name"], shares=shares, reason=o["reason"], t=o["time"], rule=rule)
+    if not quiet:
+        print(f"注文 {o['id']}: [{ACCTS[acct]}] {code} {o['name']} {shares}株 成行買い（見積もり {est:,.1f}円"
+              + (f"・{pd.Timestamp(et).strftime('%H:%M')}の値）" if et is not None else "）"))
+    return o
 
 
-def cmd_sell(pf, acct, code, shares, reason):
+def cmd_sell(pf, acct, code, shares, reason, how=None, quiet=False):
     t = now()
     p = next((p for p in pf["positions"] if p["acct"] == acct and p["code"] == code), None)
     if not p:
@@ -518,13 +546,15 @@ def cmd_sell(pf, acct, code, shares, reason):
     if sh <= 0 or sh % 100 or sh + pend > p["shares"]:
         err(f"売れる株数は {p['shares'] - pend}株まで（100株単位）")
     o = dict(id=nid(pf, "O"), acct=acct, side="sell", code=code, name=p["name"], shares=sh, time=t.strftime(TFMT),
-             est=p.get("last", p["avg"]), reason=reason.strip())
+             est=p.get("last", p["avg"]), reason=reason.strip(), how=how)
     pf["orders"].append(o)
     log(pf, kind="order", acct=acct, side="sell", code=code, name=p["name"], shares=sh, reason=o["reason"], t=o["time"])
-    print(f"注文 {o['id']}: [{ACCTS[acct]}] {code} {p['name']} {sh}株 成行売り")
+    if not quiet:
+        print(f"注文 {o['id']}: [{ACCTS[acct]}] {code} {p['name']} {sh}株 成行売り")
+    return o
 
 
-def cmd_stop(pf, acct, code, price, reason):
+def cmd_stop(pf, acct, code, price, reason, quiet=False):
     p = next((p for p in pf["positions"] if p["acct"] == acct and p["code"] == code), None)
     if not p:
         err("その口座にその銘柄の保有がない")
@@ -533,7 +563,8 @@ def cmd_stop(pf, acct, code, price, reason):
         err("損切りラインが現在値以上（すぐ売りたいときは sell を使う）")
     old, p["stop"] = p.get("stop"), price
     log(pf, kind="stop", acct=acct, code=code, name=p["name"], old=old, new=price, reason=reason.strip())
-    print(f"損切りライン: {code} {old} → {price}")
+    if not quiet:
+        print(f"損切りライン: {code} {old} → {price}")
 
 
 def cmd_cancel(pf, oid, reason):
@@ -545,45 +576,25 @@ def cmd_cancel(pf, oid, reason):
     print(f"取り消し: {oid}")
 
 
-def cmd_day(pf):
-    """後場の始まりに、前場（9:00〜11:30）の値動きからデイトレードの候補を出す。"""
-    codes = list(DAY_LIST) + ["1306"]
-    x = _yf(codes, period="1d", interval="5m")
+def day_open_today(pf, t):
+    """今日買ったデイトレードで、まだ決済されていないもの（大引け値の確定待ち）があるか。"""
+    d = t.strftime("%Y-%m-%d")
+    return any(p["acct"] == "day" and p["opened"][:10] == d for p in pf["positions"]) or         any(o["acct"] == "day" and o["time"][:10] == d for o in pf["orders"])
+
+
+def run_status(pf, wait_close=False):
+    import time
+    B, D = process(pf)
     t = now()
-    rows = []
-    mk = None
-    for c, g in x.items():
-        g.index = pd.DatetimeIndex(g.index).tz_convert(JST)
-        g = g[g.index.date == t.date()]
-        hm = g.index.strftime("%H:%M")
-        mor = g[hm < "11:30"]
-        if not len(mor) or hm[0] > "09:05":
-            continue
-        op, mc, hi, lo = float(mor.Open.iloc[0]), float(mor.Close.iloc[-1]), float(mor.High.max()), float(mor.Low.min())
-        r = dict(code=c, name=DAY_LIST.get(c, c), mret=mc / op - 1, mpos=(mc - lo) / (hi - lo) if hi > lo else 0.5,
-                 last=float(g.Close.iloc[-1]), last_t=g.index[-1], val=float((mor.Close * mor.Volume).sum() / 1e8))
-        if c == "1306":
-            mk = r
-        else:
-            rows.append(r)
-    if mk is None:
-        print("市場（1306）の前場の値が取れないため、今日は判断しない")
-        return
-    ok = mk["mret"] >= DAY_MKT
-    print(f"デイトレードの判断材料（前場 9:00〜11:30・{t:%m/%d}）")
-    print(f"  市場（TOPIX連動ETF 1306）の前場 {mk['mret'] * 100:+.2f}%（条件 +{DAY_MKT * 100:.1f}%以上）→ {'条件を満たす' if ok else '条件を満たさない（今日は見送り）'}")
-    cash = pf["accounts"]["day"]["cash"] - reserved(pf, "day")
-    for r in rows:
-        r["rel"] = r["mret"] - mk["mret"]
-    cand = [r for r in rows if 0.01 <= r["rel"] <= 0.06 and r["mpos"] >= 0.7 and r["last"] * 100 * BUF <= cash]
-    cand.sort(key=lambda r: -r["rel"])
-    print(f"  候補（市場より+1〜6%強く、前場を高値圏（値幅の70%以上）で引けた銘柄。100株が現金 {cash:,.0f}円 以内）: {len(cand)}銘柄")
-    for r in cand[:6]:
-        sh = int(cash // (r["last"] * BUF * 100)) * 100
-        print(f"   {r['code']} {r['name']} 前場 {r['mret'] * 100:+.2f}%（市場比 {r['rel'] * 100:+.2f}%）高値圏 {r['mpos'] * 100:.0f}% "
-              f"現在 {r['last']:,.1f}（{r['last_t']:%H:%M}）前場の売買代金 {r['val']:,.0f}億円 → 買える株数 {sh}株")
-    print("  検証（2026/7/27〜10/22・59日・103銘柄）：条件を満たした19日に、市場比が最も強い1銘柄を12:40に買い大引けで売ると"
-          "平均+0.28%・勝率53%。日数が少なく、偶然の可能性も大きい。")
+    if wait_close and is_trading(t.date()) and (t.hour, t.minute) >= (15, 30):
+        for _ in range(12):                    # 大引け値が Yahoo に出るまで、1分ごとに最大12分待つ
+            if not day_open_today(pf, now()):
+                break
+            print("大引け値の反映待ち…")
+            time.sleep(60)
+            B, D = process(pf)
+    value(pf, B, D)
+    return B, D
 
 
 def main(argv):
@@ -593,23 +604,29 @@ def main(argv):
     pf = load()
     c = argv[0]
     if c == "status":
-        B, D = process(pf)
-        value(pf, B, D)
+        run_status(pf, "--wait-close" in argv)
         earnings(pf)
         save(pf)
         show(pf)
         return
-    if c == "settle":      # 大引け後の精算（GitHub Actions から）。休場日と、保有も注文もないときは何もしない
-        if not is_trading(now().date()) or not (pf["positions"] or pf["orders"]):
+    if c == "publish":
+        print("ページ用に反映: " + publish(pf))
+        return
+    if c == "settle":      # 大引け後の精算（GitHub Actions から）。15:30の更新が反映できなかったときの予備
+        t = now()
+        if not is_trading(t.date()) or not (pf["positions"] or pf["orders"]):
             print("精算するものなし")
             return
-        B, D = process(pf)
-        value(pf, B, D)
+        run_status(pf)
         save(pf)
         show(pf)
-        return
-    if c == "day":
-        cmd_day(pf)
+        try:
+            with open(PUB, encoding="utf-8") as f:
+                pub = json.load(f).get("published", "")
+        except Exception:
+            pub = ""
+        if pub < t.strftime("%Y-%m-%d") + " 15:30":
+            print("15:30の反映がまだなので、ページ用にも反映: " + publish(pf))
         return
     if c == "memo":
         pf["memo"] = {"t": now().strftime("%Y-%m-%d %H:%M"), "text": " ".join(argv[1:]).strip()}
@@ -644,4 +661,8 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except TradeError as e:
+        print("ERROR: " + str(e), file=sys.stderr)
+        sys.exit(1)

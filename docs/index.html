@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#24508f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="株AIトレーダー">
 <title>買い残減少スクリーナー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -239,7 +243,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">信用需給 × 決算予想 ・ 東証全銘柄 ・ 平日9:00と12:30に自動更新</div>
+    <div class="eyebrow">信用需給 × 決算予想 ・ 東証全銘柄 ・ AIの仮想売買 ・ 平日9:00・12:30・15:30に自動更新</div>
     <h1>買い残減少スクリーナー</h1>
     <p class="lead">信用の買い残が「出来高に比べて重かったのに大きく減った」銘柄を拾い、押し目の買い値・損切り・利確を出します。決算が近い銘柄は、業績の進み具合・市場予想との差・決算前の上昇を見て、決算で上がるか下がるかも予想に入れています。</p>
     <div class="sync"><span>予想の更新 <b id="upd">読み込み中…</b></span><span>信用残 <b id="mdate">—</b></span><span>株価 <b id="pdate">—</b></span><span id="synced"></span><button type="button" class="btn" id="reload">最新を読み込む</button></div>
@@ -270,12 +274,24 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       <ol class="rules">
         <li><b>口座</b>：デイトレード・スイング・長期保有に100万円ずつ。口座の間でお金は移さず、増えた分（確定した利益）はその口座で使います。</li>
         <li><b>期間</b>：デイトレードはその日の大引けで必ず決済。スイングは長くても1か月（期限の日の大引けで決済）。長期保有は期限なし。</li>
-        <li><b>銘柄数</b>：同時に持つのは全体で5銘柄まで（デイトレード1・スイング2・長期保有2）。</li>
+        <li><b>銘柄数</b>：同時に持つのは口座ごとに5銘柄まで。</li>
         <li><b>注文</b>：売買は成行。注文した時刻より後に始まる最初の1分足の始値で約定とします。株価は15〜20分遅れで届くため、約定の値段は次の更新か大引け後の精算で決まります。</li>
-        <li><b>損切り</b>：逆指値（成行）。株価がラインに触れたら、そのときの値段（ラインより下で始まった足ならその始値）で売ります。デイトレードは買値−3%、スイングは計算の損切りラインに置きます。</li>
-        <li><b>判断する時刻</b>：平日9:00と12:30の更新のとき。デイトレードは、前場の値動きが分かる後場の始まりにだけ判断します。大引け後に約定と決済を精算します。</li>
+        <li><b>損切り</b>：逆指値（成行）。株価がラインに触れたら、そのときの値段（ラインより下で始まった足ならその始値）で売ります。デイトレードは朝の窓下げ買いが買値−5%・後場の強い銘柄買いが買値−3%、スイングは計算の損切りラインに置きます。</li>
+        <li><b>デイトレードの形</b>：検証で成績のよかった形だけを使います。いまは「朝の窓下げ買い」（寄り付き前の8:40に注文し、寄り付きで買って大引けで売る）と「後場の強い銘柄買い」（12:40ごろ買って大引けで売る）。毎日の大引け後に最新のデータで検証し直し、成績が崩れたら止めたり条件を変えたりします（下の「デイトレードの検証」）。</li>
+        <li><b>確認する時刻</b>：場が開いている間は約1時間ごと（8:40・9:00・10:07・11:07・12:30・13:37・14:37）に、約定・損切り・利確・新しい買いを確認します。8:40と毎時の確認は決めたルールどおりにプログラムが行い、9:00・12:30・15:30はAI（Claude）がニュースやデータも見て判断します。</li>
+        <li><b>このページの更新</b>：9:00・12:30・15:30の3回です。その間の売買は、次の更新でまとめて表示されます（15:30の更新は大引け値を待つので16時ごろ届きます）。</li>
         <li><b>計算の前提</b>：100株単位・現物のみ。手数料と税金は0円として計算しています。</li>
       </ol>
+    </details>
+  </section>
+
+  <section class="panel" id="lab" aria-labelledby="labh" hidden>
+    <div class="pf-head"><h2 id="labh">デイトレードの検証（毎日の大引け後に更新）</h2><span class="muted" id="labUpd"></span></div>
+    <p>デイトレードの形ごとに、過去のデータで「その形どおりに売買していたらどうだったか」を毎日計算し直しています。手数料・滑りとして1回0.05%を引いた後の、1日あたりの平均です。成績が崩れた形は止め、よい形が見つかれば加えます。</p>
+    <div class="pos" id="labRules"></div>
+    <details><summary>採用していない形の検証と、見直しの記録</summary>
+      <div class="tbl" style="margin-top:10px"><table><thead><tr><th>形</th><th>日数</th><th>1日平均</th><th>勝ち日</th><th>t値</th></tr></thead><tbody id="labCand"></tbody></table></div>
+      <h3 style="margin-top:12px">見直しの記録</h3><div class="pos" id="labLog"></div>
     </details>
   </section>
 
@@ -392,6 +408,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       D=await r.json();
       try{const n=await fetch(RAW('notes.json'),{cache:'no-store'});NOTES=n.ok?await n.json():null}catch(e){NOTES=null}
       try{const q=await fetch(RAW('portfolio.json'),{cache:'no-store'});paintPf(q.ok?await q.json():null)}catch(e){paintPf(null)}
+      try{const q=await fetch(RAW('daylab.json'),{cache:'no-store'});paintLab(q.ok?await q.json():null)}catch(e){paintLab(null)}
       paint();
       $('synced').textContent='読み込み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
     }catch(e){
@@ -406,9 +423,9 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     for(let i=0;i<8;i++){
       const d=new Date(Date.UTC(j.getUTCFullYear(),j.getUTCMonth(),j.getUTCDate()-i)),w=d.getUTCDay();
       if(w===0||w===6)continue;
-      for(const [h,mi] of [[12,30],[9,0]]){
+      for(const [h,mi,g] of [[15,30,60],[12,30,40],[9,0,40]]){
         const t=new Date(d.getTime()+h*3600e3+mi*60e3);
-        if(t.getTime()+40*60e3<=j.getTime())return t;
+        if(t.getTime()+g*60e3<=j.getTime())return t;
       }
     }
     return null;
@@ -459,13 +476,13 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
   }
 
   // 仮想売買
-  const ACN={day:'デイトレード',swing:'スイング',long:'長期保有'},ACR={day:'その日のうちに決済',swing:'最長1か月',long:'期間なし'},ACC={day:1,swing:2,long:2};
+  const ACN={day:'デイトレード',swing:'スイング',long:'長期保有'},ACR={day:'その日のうちに決済',swing:'最長1か月',long:'期間なし'},ACC={day:5,swing:5,long:5};
   const pc=v=>v>0?'up':v<0?'dn':'';
   const dt=s=>s?s.slice(5,16).replace('-','/'):'';
   function paintPf(P){
     $('pf').hidden=!P; if(!P)return;
     const cap=P.capital||1000000,A=P.accounts,keys=['day','swing','long'];
-    $('pfUpd').textContent=`${dt(P.updated)} 更新・株価は${P.price_asof?dt(P.price_asof)+'時点':'—'}・${md(P.start)}開始`;
+    $('pfUpd').textContent=`${dt(P.published||P.updated)} 更新（9:00・12:30・15:30）・株価は${P.price_asof?dt(P.price_asof)+'時点':'—'}・${md(P.start)}開始`;
     const tot=keys.reduce((a,k)=>a+(A[k].equity==null?cap:A[k].equity),0),tp=tot-cap*3;
     $('pfTotal').innerHTML=`<div><div class="k">3口座の合計（元金300万円）</div><div class="v">${fmt(tot)}円</div></div><div class="p ${pc(tp)}">${sgn(tp,0)}円（${sgn(tp/(cap*3)*100,2)}%）</div>`;
     $('pfAccts').innerHTML=keys.map(k=>{const a=A[k],eq=a.equity==null?cap:a.equity,p=eq-cap;
@@ -489,6 +506,23 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
         :x.kind==='stop'?`損切りライン ${x.old?fmt(x.old)+'円':'なし'} → ${x.new?fmt(x.new)+'円':'なし'}`:'';
       return `<div class="pos-i lg"><div class="h"><span class="m num">${dt(x.t)}</span><span class="pill ac-${x.acct}">${ACN[x.acct]||''}</span><b>${kind(x)} ${esc(x.code)} ${esc(x.name)}</b>${x.how?`<span class="m">${esc(x.how)}</span>`:''}</div>
         ${body?`<div class="l">${body}</div>`:''}${x.reason?`<div class="r">理由：${esc(x.reason)}</div>`:''}</div>`}).join(''):'<div class="empty">まだ約定はありません。</div>';
+  }
+
+  function paintLab(L){
+    $('lab').hidden=!L; if(!L)return;
+    const dd=L.data||{};
+    $('labUpd').textContent=`${dt(L.updated)} 更新・日足 ${dd.daily_from||''}〜・5分足 ${dd.intraday_from||''}〜・${dd.stocks||''}銘柄`;
+    const st=b=>b&&b.mean!=null?`${fmt(b.days)}日・1日平均 <b class="${pc(b.mean)}">${sgn(b.mean,2)}%</b>・勝ち日 ${fmt(b.win,0)}%・t値 ${fmt(b.t,1)}`:'検証の日数が足りません';
+    const yr=b=>b&&b.years?Object.entries(b.years).map(([y,v])=>`${y}年 ${sgn(v,2)}%`).join('・'):'';
+    $('labRules').innerHTML=(L.rules||[]).map(r=>{const lv=r.live||{};
+      return `<div class="pos-i"><div class="h"><span class="pill ${r.on?'vw-買い候補':'vw-見送り'}">${r.on?'採用中':'停止中'}</span><b>${esc(r.name)}</b></div>
+        <div class="r">${esc(r.desc)}</div>
+        <div class="m">検証：${st(r.bt)}${yr(r.bt)?'<br>年ごと：'+yr(r.bt):''}</div>
+        ${r.id==='M1'?`<div class="m">直近60日：${st(r.recent)}</div>`:''}
+        <div class="m">実際の仮想売買：${lv.n?`${lv.n}回・勝率 ${fmt(lv.win,0)}%・平均 <span class="${pc(lv.mean)}">${sgn(lv.mean,2)}%</span>・損益 <span class="${pc(lv.yen)}">${sgn(lv.yen,0)}円</span>`:'まだありません'}</div>
+        ${r.note?`<div class="m">${esc(r.note)}</div>`:''}</div>`}).join('');
+    $('labCand').innerHTML=(L.candidates||[]).map(c=>{const b=c.bt||{};return `<tr><td class="wrap">${esc(c.name)}</td><td class="n">${fmt(b.days)}</td><td class="n ${pc(b.mean)}">${b.mean==null?'—':sgn(b.mean,2)+'%'}</td><td class="n">${b.win==null?'—':fmt(b.win,0)+'%'}</td><td class="n">${b.t==null?'—':fmt(b.t,1)}</td></tr>`}).join('');
+    $('labLog').innerHTML=(L.log||[]).slice().reverse().map(x=>`<div class="pos-i lg"><div class="m num">${esc(x.t)}</div><div class="r">${esc(x.text)}</div></div>`).join('')||'<div class="muted">まだありません。</div>';
   }
 
   function sizing(s){
