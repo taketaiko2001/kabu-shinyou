@@ -205,6 +205,33 @@ td.wrap{white-space:normal;min-width:14em}
 @media (max-width:640px){.ev-row{grid-template-columns:1fr}}
 .rules{margin:0;padding-left:1.3em;display:grid;gap:8px}
 .rules b{color:var(--ink)}
+.pf-head{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;justify-content:space-between}
+.pf-head .muted{font-size:12.5px}
+.pf h3{font-size:15px;font-weight:700;margin-top:4px}
+.pf-total{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:baseline;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:12px}
+.pf-total .k{font-size:12px;font-weight:700;color:var(--ink-3)}
+.pf-total .v{font-family:var(--f-num);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.pf-total .p{font-family:var(--f-num);font-size:16px;font-weight:600}
+.accts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.accts{grid-template-columns:1fr}}
+.acct{background:var(--surface-2);border-radius:8px;padding:12px 14px;display:grid;gap:2px;min-width:0}
+.acct .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.acct .h b{font-size:14px}
+.acct .h span{font-size:12px;color:var(--ink-3)}
+.acct .v{font-family:var(--f-num);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.acct .p{font-family:var(--f-num);font-size:13.5px;font-weight:600}
+.acct .s{font-size:12.5px;color:var(--ink-2)}
+.pos{display:grid;gap:8px}
+.pos-i{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.pos-i .h{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.pos-i .h b{font-size:15px}
+.pos-i .l{font-family:var(--f-num);font-size:14px}
+.pos-i .m{font-size:12.5px;color:var(--ink-3)}
+.pos-i .r{font-size:13px;color:var(--ink-2)}
+.pos-i.lg{background:var(--surface-2);border-color:transparent;padding:8px 12px}
+.ac-day{background:var(--accent-soft);color:var(--accent)}
+.ac-swing{background:var(--good-soft);color:var(--good)}
+.ac-long{background:var(--warn-soft);color:var(--warn)}
 footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
 @media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--ink-3)}}
 </style>
@@ -226,6 +253,30 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     <div><span class="lab">市場全体の信用買い残</span><span class="val" id="mB">—</span><span class="sub" id="mBs"></span></div>
     <div><span class="lab">信用倍率（金額・2市場）</span><span class="val" id="mR">—</span><span class="sub" id="mRs"></span></div>
     <div class="stop"><span class="lab">新規買いを止めるライン</span><span class="val" id="mL">—</span><span class="sub" id="mLs">日経平均の終値がここ（直近10日の安値）を割ったら、新しい買いは見送る</span></div>
+  </section>
+
+  <section class="panel pf" id="pf" aria-labelledby="pfh" hidden>
+    <div class="pf-head"><h2 id="pfh">AIトレーダーの仮想売買</h2><span class="muted" id="pfUpd"></span></div>
+    <p>元金300万円を3つの口座（各100万円）に分けて、AI（Claude）が仮想で売買しています。実際のお金は動きません。約定の値段は、注文した時刻より後の実際の株価で決めています。</p>
+    <div class="pf-total" id="pfTotal"></div>
+    <div class="accts" id="pfAccts"></div>
+    <div class="note" id="pfMemo" hidden><span class="k">トレーダーのメモ</span><p></p></div>
+    <h3>保有中の銘柄</h3>
+    <div class="pos" id="pfPos"></div>
+    <div id="pfOrdW" hidden><h3>約定待ちの注文</h3><div class="pos" id="pfOrd"></div></div>
+    <h3>売買の記録</h3>
+    <div class="pos" id="pfLog"></div>
+    <details><summary>仮想売買のルール</summary>
+      <ol class="rules">
+        <li><b>口座</b>：デイトレード・スイング・長期保有に100万円ずつ。口座の間でお金は移さず、増えた分（確定した利益）はその口座で使います。</li>
+        <li><b>期間</b>：デイトレードはその日の大引けで必ず決済。スイングは長くても1か月（期限の日の大引けで決済）。長期保有は期限なし。</li>
+        <li><b>銘柄数</b>：同時に持つのは全体で5銘柄まで（デイトレード1・スイング2・長期保有2）。</li>
+        <li><b>注文</b>：売買は成行。注文した時刻より後に始まる最初の1分足の始値で約定とします。株価は15〜20分遅れで届くため、約定の値段は次の更新か大引け後の精算で決まります。</li>
+        <li><b>損切り</b>：逆指値（成行）。株価がラインに触れたら、そのときの値段（ラインより下で始まった足ならその始値）で売ります。デイトレードは買値−3%、スイングは計算の損切りラインに置きます。</li>
+        <li><b>判断する時刻</b>：平日9:00と12:30の更新のとき。デイトレードは、前場の値動きが分かる後場の始まりにだけ判断します。大引け後に約定と決済を精算します。</li>
+        <li><b>計算の前提</b>：100株単位・現物のみ。手数料と税金は0円として計算しています。</li>
+      </ol>
+    </details>
   </section>
 
   <section class="controls" aria-label="絞り込みと資金設定">
@@ -340,6 +391,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       if(!r.ok) throw new Error('HTTP '+r.status);
       D=await r.json();
       try{const n=await fetch(RAW('notes.json'),{cache:'no-store'});NOTES=n.ok?await n.json():null}catch(e){NOTES=null}
+      try{const q=await fetch(RAW('portfolio.json'),{cache:'no-store'});paintPf(q.ok?await q.json():null)}catch(e){paintPf(null)}
       paint();
       $('synced').textContent='読み込み '+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
     }catch(e){
@@ -404,6 +456,39 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       return `<div class="ev-row"><div><div class="t">${esc(e.k)}</div><div class="d">${esc(det)}</div></div><div class="ev-track" role="img" aria-label="${esc(e.k)} ${sgn(e.x20,2)}%"><span class="zero"></span><span class="ev-bar ${pos?'pos':'neg'}" style="width:${w}%"></span>${lab}</div></div>`}).join('');
     $('ev2n').textContent=ev.earn_note;
     $('ev2').innerHTML=ev.earnings.map(e=>`<tr><td class="wrap">${esc(e.k)}</td><td class="n">${fmt(e.n)}</td><td class="n">${sgn(e.react,2)}%</td><td class="n">${e.med==null?'—':sgn(e.med,2)+'%'}</td><td class="n">${fmt(e.up,1)}%</td><td class="n">${e.post==null?'—':sgn(e.post,2)+'%'}</td></tr>`).join('');
+  }
+
+  // 仮想売買
+  const ACN={day:'デイトレード',swing:'スイング',long:'長期保有'},ACR={day:'その日のうちに決済',swing:'最長1か月',long:'期間なし'},ACC={day:1,swing:2,long:2};
+  const pc=v=>v>0?'up':v<0?'dn':'';
+  const dt=s=>s?s.slice(5,16).replace('-','/'):'';
+  function paintPf(P){
+    $('pf').hidden=!P; if(!P)return;
+    const cap=P.capital||1000000,A=P.accounts,keys=['day','swing','long'];
+    $('pfUpd').textContent=`${dt(P.updated)} 更新・株価は${P.price_asof?dt(P.price_asof)+'時点':'—'}・${md(P.start)}開始`;
+    const tot=keys.reduce((a,k)=>a+(A[k].equity==null?cap:A[k].equity),0),tp=tot-cap*3;
+    $('pfTotal').innerHTML=`<div><div class="k">3口座の合計（元金300万円）</div><div class="v">${fmt(tot)}円</div></div><div class="p ${pc(tp)}">${sgn(tp,0)}円（${sgn(tp/(cap*3)*100,2)}%）</div>`;
+    $('pfAccts').innerHTML=keys.map(k=>{const a=A[k],eq=a.equity==null?cap:a.equity,p=eq-cap;
+      return `<div class="acct"><div class="h"><b>${ACN[k]}</b><span>${ACR[k]}</span></div><div class="v">${fmt(eq)}円</div>
+        <div class="p ${pc(p)}">${sgn(p,0)}円（${sgn(p/cap*100,2)}%）</div>
+        <div class="s">現金 ${fmt(a.cash)}円・保有 ${a.n||0}/${ACC[k]}銘柄・確定した損益 ${sgn(a.realized||0,0)}円</div></div>`}).join('');
+    const mm=P.memo&&P.memo.text;$('pfMemo').hidden=!mm;if(mm)$('pfMemo').querySelector('p').textContent=`${dt(P.memo.t)}　${P.memo.text}`;
+    const ps=P.positions||[];
+    $('pfPos').innerHTML=ps.length?ps.map(p=>{const r=(p.last/p.avg-1)*100,y=(p.last-p.avg)*p.shares;
+      const lim=p.acct==='day'?'今日の大引けで決済':p.acct==='swing'?`期限 ${md(p.deadline)} の大引け`:'期限なし';
+      return `<div class="pos-i"><div class="h"><span class="pill ac-${p.acct}">${ACN[p.acct]}</span><b>${esc(p.code)} ${esc(p.name)}</b><span class="num">${fmt(p.shares)}株</span></div>
+        <div class="l">買値 ${fmt(p.avg,1)} → 現在 ${fmt(p.last,1)}　<span class="${pc(r)}">${sgn(r,2)}%（${sgn(y,0)}円）</span></div>
+        <div class="m">損切り ${p.stop?fmt(p.stop)+'円':'なし'}・${lim}・買った日時 ${dt(p.opened)}</div><div class="r">理由：${esc(p.reason)}</div></div>`}).join(''):'<div class="empty">いまは保有していません（全額現金）。</div>';
+    const os=P.orders||[];$('pfOrdW').hidden=!os.length;
+    $('pfOrd').innerHTML=os.map(o=>`<div class="pos-i"><div class="h"><span class="pill ac-${o.acct}">${ACN[o.acct]}</span><b>${o.side==='buy'?'買い':'売り'} ${esc(o.code)} ${esc(o.name)}</b><span class="num">${fmt(o.shares)}株</span></div>
+      <div class="m">成行・注文 ${dt(o.time)}（注文時の株価 ${fmt(o.est,1)}円）。約定の値段は次の更新で確定します。</div><div class="r">理由：${esc(o.reason)}</div></div>`).join('');
+    const lg=(P.trades||[]).filter(x=>x.kind!=='order').slice().sort((a,b)=>a.t<b.t?1:-1).slice(0,40);
+    const kind=x=>x.kind==='buy'?'買い':x.kind==='sell'?'売り':x.kind==='stop'?'損切り変更':'取消';
+    $('pfLog').innerHTML=lg.length?lg.map(x=>{
+      const body=x.kind==='buy'||x.kind==='sell'?`${fmt(x.shares)}株 @${fmt(x.price,1)}円`+(x.kind==='sell'?`　<span class="${pc(x.pnl)}">${sgn(x.pnl,0)}円（${sgn(x.pnl_pct,2)}%）</span>`:'')
+        :x.kind==='stop'?`損切りライン ${x.old?fmt(x.old)+'円':'なし'} → ${x.new?fmt(x.new)+'円':'なし'}`:'';
+      return `<div class="pos-i lg"><div class="h"><span class="m num">${dt(x.t)}</span><span class="pill ac-${x.acct}">${ACN[x.acct]||''}</span><b>${kind(x)} ${esc(x.code)} ${esc(x.name)}</b>${x.how?`<span class="m">${esc(x.how)}</span>`:''}</div>
+        ${body?`<div class="l">${body}</div>`:''}${x.reason?`<div class="r">理由：${esc(x.reason)}</div>`:''}</div>`}).join(''):'<div class="empty">まだ約定はありません。</div>';
   }
 
   function sizing(s){
