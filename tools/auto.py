@@ -5,10 +5,11 @@
 
 時刻ごとのルール（日本時間・営業日）:
   8:25〜8:59   M1 朝の窓下げ買い：前日も下げ、夜間取引（PTS）で前日終値より1.5〜6%安い銘柄を、窓の大きい順に寄り付きで買う
+               （PTS は株探から取る。株探は GitHub Actions からは取れないので、M1 は 8:40 の Claude の更新で動かす）
   9:00〜15:20  スイング：見立てが「買い候補」で、現在値が買い目安＋0.3ATR以内なら買う。利確1・利確2・20営業日・決算前の売り
   12:30〜13:20 P1 後場の強い銘柄買い：市場の前場が強い日に、前場で市場より強く高値圏で引けた銘柄を買う
 デイトレードはどちらも大引けで自動決済（trade.py）。ルールの値は data/trade/day_rules.json で、15:30の更新で見直す。
-1時間ごとの確認（GitHub Actions、平日 8:40・10:07・11:07・13:37・14:37）と、9:00・12:30 の更新で動かす。
+8:40（朝）・12:30 の Claude の更新と、1時間ごとの確認（GitHub Actions、平日 10:07・11:07・13:37・14:37）で動かす。
 """
 import json
 import math
@@ -126,7 +127,10 @@ def rule_m1(pf, R, t, dry, out):
     say(out, f"M1 朝の窓下げ買い：前日も下げた{len(pre)}銘柄のうち、PTSで{R['gap_lo'] * 100:.1f}〜{R['gap_hi'] * 100:.1f}%安いのは{len(cand)}銘柄")
     have = held(pf, "day")
     eq = pf["accounts"]["day"].get("equity", T.CAPITAL)
-    n = 0
+    d0 = t.strftime("%Y-%m-%d")
+    n = sum(1 for o in pf["orders"] if o.get("rule") == "M1" and o["time"][:10] == d0) +         sum(1 for p in pf["positions"] if p.get("rule") == "M1" and p["opened"][:10] == d0)
+    if n:
+        say(out, f"  今日の M1 はすでに{n}銘柄を注文済み")
     for r in cand:
         if n >= R["max"]:
             break
