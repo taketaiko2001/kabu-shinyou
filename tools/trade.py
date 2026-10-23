@@ -1,6 +1,6 @@
 """仮想売買（ペーパートレード）の記録と計算。実際の発注は一切しない。
 作業用の記録は data/trade/portfolio.json（1時間ごとの確認でも書き換える）。スマホのページが読むのは
-docs/data/portfolio.json で、9:00・12:30・15:30の更新で publish したときだけ書き換わる。
+docs/data/portfolio.json で、朝（8:45ごろ）・12:30・15:30の更新で publish したときだけ書き換わる。
 
   python3 tools/trade.py status [--wait-close]           … 約定・損切り・引け決済・期限を処理し、口座と保有を表示して保存
                                                           （--wait-close: 今日のデイトレードの大引け値が出るまで最大12分待つ）
@@ -9,6 +9,7 @@ docs/data/portfolio.json で、9:00・12:30・15:30の更新で publish した�
   python3 tools/trade.py stop 口座 コード 価格 "理由"       … 損切りライン（逆指値）を変える。0 で外す
   python3 tools/trade.py cancel 注文ID "理由"               … 約定待ちの注文を取り消す
   python3 tools/trade.py memo "文"                        … ページに出すトレーダーのメモ
+  python3 tools/trade.py journal ["文"]                   … 振り返りの記録に1件足す（文なしで直近10件を表示）。次の回の Claude が読む
   python3 tools/trade.py publish                         … 作業用の記録をスマホのページ用にコピーする
   python3 tools/trade.py settle                          … 大引け後の精算（GitHub Actions 用）
 機械的な売買ルール（デイトレードの朝・後場、スイング）は tools/auto.py、デイトレードの検証は tools/daylab.py。
@@ -42,6 +43,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PF = os.path.join(ROOT, "data", "trade", "portfolio.json")        # 作業用
 PUB = os.path.join(ROOT, "docs", "data", "portfolio.json")        # スマホのページ用（publish で更新）
 LATEST = os.path.join(ROOT, "docs", "data", "latest.json")
+JOURNAL = os.path.join(ROOT, "data", "trade", "journal.json")    # 振り返りの記録（Claude が書き、次の回が読む）
 JST = timezone(timedelta(hours=9))
 CAPITAL = 1_000_000
 ACCTS = {"day": "デイトレード", "swing": "スイング", "long": "長期保有"}
@@ -233,8 +235,16 @@ def save(pf):
         json.dump(pf, f, ensure_ascii=False, indent=1)
 
 
+def journal_load():
+    try:
+        with open(JOURNAL, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return []
+
+
 def publish(pf):
-    q = dict(pf, published=now().strftime("%Y-%m-%d %H:%M"))
+    q = dict(pf, published=now().strftime("%Y-%m-%d %H:%M"), journal=journal_load()[-10:])
     with open(PUB, "w", encoding="utf-8") as f:
         json.dump(q, f, ensure_ascii=False, indent=1)
     return q["published"]
@@ -503,8 +513,8 @@ def cmd_buy(pf, acct, code, shares, reason, stop=None, tp1=None, tp2=None, rule=
         err("理由を書く")
     if not is_trading(t.date()):
         err("今日は休場日")
-    if acct == "day" and not ((8, 25) <= (t.hour, t.minute) < (14, 30)):
-        err("デイトレードの買いは 8:25〜14:30 だけ（9:00前の注文は寄り付きで約定。その日の大引けで決済するため）")
+    if acct == "day" and not ((8, 15) <= (t.hour, t.minute) < (14, 30)):
+        err("デイトレードの買いは 8:15〜14:30 だけ（9:00前の注文は寄り付きで約定。その日の大引けで決済するため）")
     held = {p["code"] for p in pf["positions"] if p["acct"] == acct} | {o["code"] for o in pf["orders"] if o["acct"] == acct and o["side"] == "buy"}
     if code not in held and len(held) >= CAP[acct]:
         err(f"{ACCTS[acct]}は同時に{CAP[acct]}銘柄まで（全体で5銘柄まで）")
@@ -608,6 +618,24 @@ def main(argv):
         earnings(pf)
         save(pf)
         show(pf)
+        J = journal_load()
+        if J:
+            print("振り返りの記録（直近3件。全部は journal で表示）:")
+            for j in J[-3:]:
+                print(f"  {j['t']} {j['text']}")
+        return
+    if c == "journal":
+        J = journal_load()
+        text = " ".join(argv[1:]).strip()
+        if text:
+            J.append({"t": now().strftime("%Y-%m-%d %H:%M"), "text": text})
+            os.makedirs(os.path.dirname(JOURNAL), exist_ok=True)
+            with open(JOURNAL, "w", encoding="utf-8") as f:
+                json.dump(J, f, ensure_ascii=False, indent=1)
+            print(f"振り返りを記録（{len(J)}件目）")
+        else:
+            for j in J[-10:]:
+                print(f"{j['t']} {j['text']}")
         return
     if c == "publish":
         print("ページ用に反映: " + publish(pf))

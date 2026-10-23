@@ -4,12 +4,13 @@
   python3 tools/auto.py --dry    … 注文せずに、何をするかだけ表示
 
 時刻ごとのルール（日本時間・営業日）:
-  8:25〜8:59   M1 朝の窓下げ買い：前日も下げ、夜間取引（PTS）で前日終値より1.5〜6%安い銘柄を、窓の大きい順に寄り付きで買う
-               （PTS は株探から取る。株探は GitHub Actions からは取れないので、M1 は 8:40 の Claude の更新で動かす）
+  8:15〜8:59   M1 朝の窓下げ買い：前日も下げ、夜間取引（PTS）で前日終値より1.5〜6%安い銘柄を、窓の大きい順に寄り付きで買う
+               ただし日経平均先物が前日15:30から大きく下げている日（市場全体が下げて始まる日）は休む
+               （PTS は株探から取る。株探は GitHub Actions からは取れないので、M1 は朝8:20の Claude の更新で動かす）
   9:00〜15:20  スイング：見立てが「買い候補」で、現在値が買い目安＋0.3ATR以内なら買う。利確1・利確2・20営業日・決算前の売り
   12:30〜13:20 P1 後場の強い銘柄買い：市場の前場が強い日に、前場で市場より強く高値圏で引けた銘柄を買う
 デイトレードはどちらも大引けで自動決済（trade.py）。ルールの値は data/trade/day_rules.json で、15:30の更新で見直す。
-8:40（朝）・12:30 の Claude の更新と、1時間ごとの確認（GitHub Actions、平日 10:07・11:07・13:37・14:37）で動かす。
+朝8:20・12:30 の Claude の更新と、1時間ごとの確認（GitHub Actions、平日 10:07・11:07・13:37・14:37）で動かす。
 """
 import json
 import math
@@ -25,7 +26,8 @@ ROOT = T.ROOT
 RULES = os.path.join(ROOT, "data", "trade", "day_rules.json")
 NOTES = os.path.join(ROOT, "docs", "data", "notes.json")
 DEFAULT_RULES = {
-    "M1": {"on": True, "name": "朝の窓下げ買い", "gap_lo": -0.06, "gap_hi": -0.015, "prev_down": True, "max": 3, "stop": 0.05, "size": 0.35},
+    "M1": {"on": True, "name": "朝の窓下げ買い", "gap_lo": -0.06, "gap_hi": -0.015, "prev_down": True, "mkt_gap": -0.01, "fut_gap": -0.015,
+           "max": 3, "stop": 0.05, "size": 0.35},
     "P1": {"on": True, "name": "後場の強い銘柄買い", "mkt": 0.003, "rel_lo": 0.01, "rel_hi": 0.06, "pos": 0.7, "max": 1, "stop": 0.03, "size": 0.5},
     "log": [],
 }
@@ -89,6 +91,29 @@ def pts(code):
     return float(m.group(1).replace(",", "")), datetime(y, mo, d, int(m.group(2)), int(m.group(3)), tzinfo=T.JST)
 
 
+def fut_gap(t):
+    """日経平均先物（CME・円建て NIY=F）の、前営業日15:30から今までの変化（市場全体の窓の見積もり）と時刻。取れなければ None。
+    2026/10 の確かめでは、8:30 時点のこの値と実際の窓（1306）の相関は0.88、動きは実際の窓の約1.7倍。"""
+    import pandas as pd
+    import yfinance as yf
+    try:
+        d = yf.download("NIY=F", period="5d", interval="5m", progress=False, auto_adjust=False, threads=False)
+    except Exception:
+        return None
+    if d is None or not len(d):
+        return None
+    if isinstance(d.columns, pd.MultiIndex):
+        d.columns = d.columns.get_level_values(0)
+    d = d[d.Close > 0]
+    d.index = d.index.tz_convert(T.JST)
+    pdy = T.trading_on_or_before(t.date() - timedelta(days=1))
+    t0 = datetime(pdy.year, pdy.month, pdy.day, 15, 30, tzinfo=T.JST)
+    a, b = d[d.index <= t0], d[d.index <= t]
+    if not len(a) or not len(b) or b.index[-1] <= t0 or t - b.index[-1] > timedelta(hours=3):
+        return None
+    return float(b.Close.iloc[-1]) / float(a.Close.iloc[-1]) - 1, b.index[-1]
+
+
 def say(out, s):
     out.append(s)
     print(s)
@@ -99,6 +124,15 @@ def rule_m1(pf, R, t, dry, out):
     if not R.get("on"):
         say(out, "M1 朝の窓下げ買い：停止中")
         return
+    fg = fut_gap(t)
+    if fg is None:
+        say(out, "M1 朝の窓下げ買い：日経平均先物が取れないため、市場全体の窓は確かめずに進める")
+    else:
+        say(out, f"M1 朝の窓下げ買い：日経平均先物は前日15:30から{fg[0] * 100:+.2f}%（{fg[1]:%H:%M}時点）")
+        if R.get("fut_gap") is not None and fg[0] <= R["fut_gap"]:
+            say(out, f"  市場全体が大きく下げて始まる見込み（先物{R['fut_gap'] * 100:.1f}%以下）なので、今日は休み"
+                     "（検証では、市場全体が−1%以下で始まる日の成績が悪い）")
+            return
     codes = list(T.DAY_LIST)
     D = T.daily(codes)
     prev_day = T.trading_on_or_before(t.date() - timedelta(days=1))
@@ -149,7 +183,8 @@ def rule_m1(pf, R, t, dry, out):
             say(out, f"  {r['code']} {T.DAY_LIST[r['code']]}：100株でも1枠（{per:,.0f}円）を超えるため見送り")
             continue
         reason = (f"朝の窓下げ買い（M1）：前日{r['pr'] * 100:+.1f}%に続き、PTSで前日終値より{r['gap'] * 100:+.1f}%安い"
-                  f"（{r['pts_t']:%H:%M}）。下げて始まった分の戻りを狙い、寄り付きで買って大引けで売る。損切りは買値−{R['stop'] * 100:.0f}%。")
+                  f"（{r['pts_t']:%H:%M}）" + (f"、日経平均先物は{fg[0] * 100:+.1f}%" if fg else "") + "。下げて始まった分の戻りを狙い、"
+                  f"寄り付きで買って大引けで売る。損切りは買値−{R['stop'] * 100:.0f}%。")
         say(out, f"  買い {r['code']} {T.DAY_LIST[r['code']]} {sh}株（PTS {r['pts']:,.1f}円）")
         if not dry:
             T.cmd_buy(pf, "day", r["code"], sh, reason, rule="M1", stop_pct=R["stop"], est=r["pts"], name=T.DAY_LIST[r["code"]], quiet=True)
@@ -370,15 +405,15 @@ def main(argv):
     if not T.is_trading(t.date()):
         print("休場日のため何もしない")
         return 0
-    if not ((8, 25) <= hm(t) < (15, 20)):
-        print(f"{t:%H:%M} は売買ルールの時間外（8:25〜15:20）")
+    if not ((8, 15) <= hm(t) < (15, 20)):
+        print(f"{t:%H:%M} は売買ルールの時間外（8:15〜15:20）")
         return 0
     pf = T.load()
     R = rules()
     B, D = T.process(pf)
     T.value(pf, B, D)
     out = []
-    if (8, 25) <= hm(t) < (8, 59):
+    if (8, 15) <= hm(t) < (8, 59):
         rule_m1(pf, R["M1"], t, dry, out)
     if (9, 0) <= hm(t) < (15, 20):
         rule_swing(pf, t, dry, out, B)

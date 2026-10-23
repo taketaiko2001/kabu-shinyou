@@ -243,7 +243,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">信用需給 × 決算予想 ・ 東証全銘柄 ・ AIの仮想売買 ・ 平日9:00・12:30・15:30に自動更新</div>
+    <div class="eyebrow">信用需給 × 決算予想 ・ 東証全銘柄 ・ AIの仮想売買 ・ 平日8:45・12:30・15:30ごろに自動更新</div>
     <h1>買い残減少スクリーナー</h1>
     <p class="lead">信用の買い残が「出来高に比べて重かったのに大きく減った」銘柄を拾い、押し目の買い値・損切り・利確を出します。決算が近い銘柄は、業績の進み具合・市場予想との差・決算前の上昇を見て、決算で上がるか下がるかも予想に入れています。</p>
     <div class="sync"><span>予想の更新 <b id="upd">読み込み中…</b></span><span>信用残 <b id="mdate">—</b></span><span>株価 <b id="pdate">—</b></span><span id="synced"></span><button type="button" class="btn" id="reload">最新を読み込む</button></div>
@@ -265,6 +265,8 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     <div class="pf-total" id="pfTotal"></div>
     <div class="accts" id="pfAccts"></div>
     <div class="note" id="pfMemo" hidden><span class="k">トレーダーのメモ</span><p></p></div>
+    <div class="note" id="pfJour" hidden><span class="k">AIの振り返り（毎日の大引け後。次の日の判断に使います）</span><p></p>
+      <details id="pfJourOld" hidden><summary>これまでの振り返り</summary><div class="pos" id="pfJourList" style="margin-top:8px"></div></details></div>
     <h3>保有中の銘柄</h3>
     <div class="pos" id="pfPos"></div>
     <div id="pfOrdW" hidden><h3>約定待ちの注文</h3><div class="pos" id="pfOrd"></div></div>
@@ -277,9 +279,9 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
         <li><b>銘柄数</b>：同時に持つのは口座ごとに5銘柄まで。</li>
         <li><b>注文</b>：売買は成行。注文した時刻より後に始まる最初の1分足の始値で約定とします。株価は15〜20分遅れで届くため、約定の値段は次の更新か大引け後の精算で決まります。</li>
         <li><b>損切り</b>：逆指値（成行）。株価がラインに触れたら、そのときの値段（ラインより下で始まった足ならその始値）で売ります。デイトレードは朝の窓下げ買いが買値−5%・後場の強い銘柄買いが買値−3%、スイングは計算の損切りラインに置きます。</li>
-        <li><b>デイトレードの形</b>：検証で成績のよかった形だけを使います。いまは「朝の窓下げ買い」（寄り付き前の8:40ごろに注文し、寄り付きで買って大引けで売る）と「後場の強い銘柄買い」（12:40ごろ買って大引けで売る）。毎日の大引け後に最新のデータで検証し直し、成績が崩れたら止めたり条件を変えたりします（下の「デイトレードの検証」）。</li>
-        <li><b>確認する時刻</b>：朝8:40ごろ（寄り付き前）・10:07・11:07・12:30・13:37・14:37・15:30に、約定・損切り・利確・新しい買いを確認します。朝・12:30・15:30はAI（Claude）がニュースやデータも見て判断し、10:07・11:07・13:37・14:37は決めたルールどおりにプログラムが確認します。</li>
-        <li><b>このページの更新</b>：9:00・12:30・15:30の3回です。その間の売買は、次の更新でまとめて表示されます（15:30の更新は大引け値を待つので16時ごろ届きます）。</li>
+        <li><b>デイトレードの形</b>：検証で成績のよかった形だけを使います。いまは「朝の窓下げ買い」（寄り付き前の8:30ごろに注文し、寄り付きで買って大引けで売る。日経平均先物が大きく下げている日は休む）と「後場の強い銘柄買い」（12:40ごろ買って大引けで売る）。毎日の大引け後に最新のデータで検証し直し、成績が崩れたら止めたり条件を変えたりします（下の「デイトレードの検証」）。</li>
+        <li><b>確認する時刻</b>：朝8:30ごろ（寄り付き前）・10:07・11:07・12:30・13:37・14:37・15:30に、約定・損切り・利確・新しい買いを確認します。朝・12:30・15:30はAI（Claude）が海外市場・市況ニュース・個別のニュースも見て判断し、10:07・11:07・13:37・14:37は決めたルールどおりにプログラムが確認します。</li>
+        <li><b>このページの更新</b>：朝8:45ごろ・12:30すぎ・15:30すぎの3回です。その間の売買は、次の更新でまとめて表示されます（15:30の更新は大引け値を待つので16時ごろ届きます）。</li>
         <li><b>計算の前提</b>：100株単位・現物のみ。手数料と税金は0円として計算しています。</li>
       </ol>
     </details>
@@ -417,13 +419,13 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
     }
   }
 
-  // 予定どおり更新されているか（平日9:00・12:30。実行に時間がかかるので40分の猶予）
+  // 予定どおり更新されているか（平日 朝8:20開始・12:30・15:40開始。予想の日時は開始直後に付くので、その時刻と猶予で判定）
   function lastSlot(){
     const j=new Date(Date.now()+9*3600e3);
     for(let i=0;i<8;i++){
       const d=new Date(Date.UTC(j.getUTCFullYear(),j.getUTCMonth(),j.getUTCDate()-i)),w=d.getUTCDay();
       if(w===0||w===6)continue;
-      for(const [h,mi,g] of [[15,30,60],[12,30,40],[9,0,40]]){
+      for(const [h,mi,g] of [[15,30,60],[12,30,40],[8,20,50]]){
         const t=new Date(d.getTime()+h*3600e3+mi*60e3);
         if(t.getTime()+g*60e3<=j.getTime())return t;
       }
@@ -482,7 +484,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
   function paintPf(P){
     $('pf').hidden=!P; if(!P)return;
     const cap=P.capital||1000000,A=P.accounts,keys=['day','swing','long'];
-    $('pfUpd').textContent=`${dt(P.published||P.updated)} 更新（9:00・12:30・15:30）・株価は${P.price_asof?dt(P.price_asof)+'時点':'—'}・${md(P.start)}開始`;
+    $('pfUpd').textContent=`${dt(P.published||P.updated)} 更新（8:45・12:30・15:30ごろ）・株価は${P.price_asof?dt(P.price_asof)+'時点':'—'}・${md(P.start)}開始`;
     const tot=keys.reduce((a,k)=>a+(A[k].equity==null?cap:A[k].equity),0),tp=tot-cap*3;
     $('pfTotal').innerHTML=`<div><div class="k">3口座の合計（元金300万円）</div><div class="v">${fmt(tot)}円</div></div><div class="p ${pc(tp)}">${sgn(tp,0)}円（${sgn(tp/(cap*3)*100,2)}%）</div>`;
     $('pfAccts').innerHTML=keys.map(k=>{const a=A[k],eq=a.equity==null?cap:a.equity,p=eq-cap;
@@ -490,6 +492,9 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
         <div class="p ${pc(p)}">${sgn(p,0)}円（${sgn(p/cap*100,2)}%）</div>
         <div class="s">現金 ${fmt(a.cash)}円・保有 ${a.n||0}/${ACC[k]}銘柄・確定した損益 ${sgn(a.realized||0,0)}円</div></div>`}).join('');
     const mm=P.memo&&P.memo.text;$('pfMemo').hidden=!mm;if(mm)$('pfMemo').querySelector('p').textContent=`${dt(P.memo.t)}　${P.memo.text}`;
+    const J=(P.journal||[]).slice().reverse();$('pfJour').hidden=!J.length;
+    if(J.length){$('pfJour').querySelector('p').textContent=`${dt(J[0].t)}　${J[0].text}`;$('pfJourOld').hidden=J.length<2;
+      $('pfJourList').innerHTML=J.slice(1).map(j=>`<div class="pos-i"><div class="m">${dt(j.t)}</div><div class="r">${esc(j.text)}</div></div>`).join('');}
     const ps=P.positions||[];
     $('pfPos').innerHTML=ps.length?ps.map(p=>{const r=(p.last/p.avg-1)*100,y=(p.last-p.avg)*p.shares;
       const lim=p.acct==='day'?'今日の大引けで決済':p.acct==='swing'?`期限 ${md(p.deadline)} の大引け`:'期限なし';

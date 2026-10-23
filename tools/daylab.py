@@ -53,7 +53,9 @@ def daily_frame():
         rows.append(f[(f.gap.abs() < 0.25)])
     r = pd.concat(rows).dropna(subset=["gap", "oc", "pr1"])
     r.index.name = "day"
-    return r.reset_index()
+    r = r.reset_index()
+    r["mgap"] = r.day.map(r[r.code == "1306"].set_index("day").gap)   # 市場全体（1306）の窓
+    return r[r.code != "1306"]
 
 
 def intraday_frame():
@@ -96,6 +98,7 @@ def intraday_frame():
     r["mk_m"] = r.day.map(mk.mret)
     r["mk_50"] = r.day.map(mk.r50)
     r["rel_m"] = r.mret - r.mk_m
+    r["mgap"] = r.day.map(mk.o / mk.pc - 1)
     r["gap"] = r.o / r.pc - 1
     r["pr1"] = np.nan
     return r
@@ -105,6 +108,8 @@ def m1_days(r, R, exit_col="oc"):
     g = r[(r.gap >= R["gap_lo"]) & (r.gap <= R["gap_hi"])]
     if R.get("prev_down"):
         g = g[g.pr1 <= 0]
+    if R.get("mkt_gap") is not None:          # 市場全体が大きく下げて始まる日は休む
+        g = g[g.mgap > R["mkt_gap"]]
     g = g.sort_values("gap").groupby("day").head(R["max"])
     return g.groupby("day")[exit_col].mean() - COST
 
@@ -149,7 +154,9 @@ def main():
     ir2["oc_am"] = ir2.mc / ir2.o - 1
     m1am = m1_days(ir2.dropna(subset=["pr1"]), R["M1"], "oc_am")
     res.append(dict(id="M1", name=R["M1"]["name"], on=R["M1"]["on"],
-                    desc=f"前日も下げ、{R['M1']['gap_lo'] * 100:.1f}〜{R['M1']['gap_hi'] * 100:.1f}%下げて始まった銘柄を、窓の大きい順に{R['M1']['max']}銘柄まで寄り付きで買い、大引けで売る",
+                    desc=f"前日も下げ、{R['M1']['gap_lo'] * 100:.1f}〜{R['M1']['gap_hi'] * 100:.1f}%下げて始まった銘柄を、窓の大きい順に{R['M1']['max']}銘柄まで寄り付きで買い、大引けで売る"
+                         + (f"。市場全体（1306）が{R['M1']['mkt_gap'] * 100:.0f}%以下で始まる日は休む（寄り付き前は日経平均先物の{R['M1']['fut_gap'] * 100:.1f}%以下で判定）"
+                            if R["M1"].get("mkt_gap") is not None else ""),
                     bt=stats(m1), recent=stats(m1r), live=live(pf, "M1"),
                     note=f"同じ条件で前引けに売った場合（直近60日）: {fmt(stats(m1am))}"))
     p1 = p1_days(ir, R["P1"])
@@ -159,6 +166,8 @@ def main():
 
     # 候補（採用していない形。毎日成績を見て、条件を満たせば採用を検討する）
     cands = []
+    if R["M1"].get("mkt_gap") is not None:
+        cands.append(dict(name="（比較）M1で市場全体の窓の条件を外した場合", bt=stats(m1_days(dr, dict(R["M1"], mkt_gap=None)))))
     g = dr[(dr.gap <= -0.015) & (dr.gap >= -0.06)]
     cands.append(dict(name="窓下げ買い（前日の上げ下げは問わない）", bt=stats(g.groupby("day").oc.mean() - COST)))
     g = dr[(dr.gap >= 0.015)]
