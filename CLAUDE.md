@@ -11,6 +11,7 @@
    - **朝の回は、8:59までに手順7-bの auto.py（M1 朝の窓下げ買いの注文）を終えること**（9:00を過ぎると寄り付きで約定しない）。手順どおりに進めれば8:35ごろに着く。手間取ったら、手順5・6を後回しにして先に7-a・7-bを行う。
 3. `timeout 540 python3 -u tools/run.py`（Bashツールの timeout は 600000 を指定する）
    - 「休場日のため更新しません」と出たら、何もせずに終了する。
+   - 出力の「候補の詳細: n/m銘柄」で n が m より大きく少ない（時間内に調べきれなかった）ときは、notes の `market` の最後にその旨を1文で書く。
    - 終了コードが0以外なら `git checkout -- docs data` で元に戻し、エラーの要点（接続拒否ならドメイン名）を1行で報告する（推測値でファイルを作らない）。ページは「予定の更新が届いていません」と自動で表示する。そのうえで手順7の a（status）と f（publish）だけを行い（新しい買いはしない。ただし朝の回は b の auto.py も行う）、`data/trade` と `docs/data/portfolio.json` だけをコミットして終了する。
 4. **点検**：`python3 tools/check.py` を実行し、点検結果と本命・次点の一覧（決算の材料・ニュース・「基準に当たる点」）を読む。営業日の数も check.py の出力を使い、自分で計算し直さない。
    続けて `python3 tools/market.py` で、市場全体の流れ（米国株・半導体指数・金利・ドル円・日経平均先物と、株探の市況ニュース）を読む。要点は notes の `market` に1文で入れ、仮想売買の判断（長期保有、スイングの悪材料）にも使う。
@@ -88,10 +89,14 @@
 - `.github/workflows/probe.yml`：GitHub Actions から Yahoo・株探に接続できるかのテスト（`.github/probe.txt` を変えて push すると動き、結果は実行の注記に出る）。2026/10/23 時点で、Yahoo は取れるが株探は断られる。
 - `.github/workflows/settle.yml`：平日16:40に、15:30の更新が大引けの決済を反映できなかったときの予備として `trade.py settle` を動かす。
 - `docs/index.html`：スマホ用ページ（GitHub Pages）。`docs/data/latest.json` などを毎回取りに行く。ホーム画面に追加できる（manifest.webmanifest・アイコン）。
+- `data/cache/kabutan.json`：株探・株予報から読んだ値の保存（run.py と trade.py が使い回す）。
 - `docs/data/latest.json`：最新の予想。`docs/data/track.json`：過去の予想の成績記録。
 - `data/margin/*.csv.gz`：日次の信用残スナップショット（4週間比較に使う）。`bad_dates.json` は異常で除外した日。
 
 ## 既知の注意点
+
+- 株探は robots.txt で「Crawl-delay: 3」の指定があるので、`sources.get` が3秒に1回までに抑える（2026-10-23 市原さん了承）。候補の詳細（決算日・信用残の推移・業績・株予報）は `data/cache/kabutan.json` に保存して使い回し、ニュースだけ毎回読む。run.py は開始から470秒を過ぎると新しく読まず、調べきれなかった候補は外す。このファイルは手で編集しない。
+- 株予報（kabuyoho.jp）は robots.txt が「Crawl-delay: 72000」（20時間）で、自動で読まれることを望んでいない。いまは5営業日使い回して読む回数を減らしている（扱いは市原さんと相談中）。
 
 - JPXの日次信用残に、市場全体の買い残が1日で大きく変わる異常な日がある（2026/10/20申込分は前日比−28%）。run.py は前日比8%超の日を自動で除外する。
 - 株価は Yahoo Finance を優先し、取れない銘柄だけ stooq で補う。ただし stooq は2026/10からブラウザ確認の画面を返すようになり、補完はほぼ効かない。

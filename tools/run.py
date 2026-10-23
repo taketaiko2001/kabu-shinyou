@@ -11,6 +11,8 @@ import json
 import os
 import re
 import sys
+import threading
+import time
 import warnings
 from datetime import datetime, timedelta, timezone
 
@@ -29,6 +31,8 @@ SNAP = os.path.join(ROOT, "data", "margin")
 JST = timezone(timedelta(hours=9))
 NOW = datetime.now(JST)
 TODAY = pd.Timestamp(NOW.date())
+T0 = time.monotonic()
+BUDGET = float(os.environ.get("RUN_BUDGET", "470"))   # 開始からこの秒数を過ぎたら、候補の詳細を新しく読まない（0で無制限）
 
 EVIDENCE = dict(
     margin=[
@@ -87,6 +91,83 @@ def prev_trading(d):
     while not is_trading(d):
         d -= pd.Timedelta(days=1)
     return d
+
+
+# ---------------------------------------------------------------- 候補の詳細（株探・株予報）
+# 株探は3秒に1回までしか読まない（sources.MIN_GAP）。変わりにくい値は前の回の結果（data/cache）を使い回す：
+# 何回前の大引け後までに読んだ値なら読み直さないか。ニュースは毎回読む。決算の発表日を過ぎたら業績を読み直す。
+FRESH = {"top": 1, "hist": 3, "fin": 5, "cons": 5}
+FETCH = {"top": S.kabutan_top, "hist": S.kabutan_margin_hist, "fin": S.kabutan_finance, "cons": S.kabuyoho}
+
+
+def over_budget():
+    return BUDGET > 0 and time.monotonic() - T0 > BUDGET
+
+
+def after_earnings(top, fin_t):
+    """決算の発表日（11時以降）を過ぎていて、その翌営業日の朝8時より前に読んだ業績なら True（読み直す）。"""
+    earn = (top or {}).get("earn") or ""
+    if not re.match(r"\d{4}/\d{2}/\d{2}$", earn):
+        return False
+    e = datetime.strptime(earn, "%Y/%m/%d").replace(tzinfo=JST)
+    if NOW < e + timedelta(hours=11):
+        return False
+    nd = pd.Timestamp(e.date()) + pd.Timedelta(days=1)
+    while not is_trading(nd):
+        nd += pd.Timedelta(days=1)
+    return fin_t < min(NOW, datetime(nd.year, nd.month, nd.day, 8, 0, tzinfo=JST))
+
+
+def fetch_details(codes):
+    """候補（優先順）ごとに top・hist・news・fin・cons を返す。時間内に調べきれなかった候補は含めない。"""
+    st = {(k, c): S.cache_get(k, c) for c in codes for k in FETCH}
+    cut = {k: S.close_cutoff(n, NOW) for k, n in FRESH.items()}
+    news, done, n_get = {}, [], {"株探": 0, "株予報": 0}
+
+    def load(k, c):
+        v = FETCH[k](c)
+        n_get["株予報" if k == "cons" else "株探"] += 1
+        if v:
+            S.cache_put(k, c, v)
+            st[(k, c)] = (NOW, v)
+
+    def stale(k, c):
+        e = st[(k, c)]
+        return e is None or e[0] < cut[k] or (k == "fin" and after_earnings((st[("top", c)] or (0, {}))[1], e[0]))
+
+    def cons_worker():          # 株予報は別のサイトなので、株探と並べて読む
+        for c in codes:
+            if over_budget():
+                return
+            if stale("cons", c):
+                load("cons", c)
+    th = threading.Thread(target=cons_worker, daemon=True)
+    th.start()
+    # 1) 優先順に、ニュースと「まだ一度も読んでいない値」「決算後の業績」を読む（これがそろった候補だけを使う）
+    for c in codes:
+        if over_budget():
+            break
+        news[c] = S.kabutan_news(c)
+        n_get["株探"] += 1
+        for k in ("top", "hist", "fin"):
+            e = st[(k, c)]
+            if e is None or (k == "fin" and after_earnings((st[("top", c)] or (0, {}))[1], e[0])):
+                load(k, c)
+        done.append(c)
+    # 2) 時間が残れば、古くなった値を優先順に読み直す
+    for k in ("top", "hist", "fin"):
+        for c in done:
+            if over_budget():
+                break
+            if stale(k, c):
+                load(k, c)
+    th.join(timeout=max(0.0, BUDGET - (time.monotonic() - T0)) if BUDGET > 0 else None)
+    S.cache_save()
+    val = lambda k, c, d: st[(k, c)][1] if st[(k, c)] else d   # noqa: E731
+    print(f"候補の詳細: {len(done)}/{len(codes)}銘柄（株探 {n_get['株探']}回・株予報 {n_get['株予報']}回 読み込み、"
+          f"残りは前の回の結果を使用・{time.monotonic() - T0:.0f}秒）")
+    return {c: dict(top=val("top", c, {}), hist=val("hist", c, []), news=news[c], fin=val("fin", c, None), cons=val("cons", c, {}))
+            for c in done}
 
 
 # ---------------------------------------------------------------- 補助
@@ -345,18 +426,15 @@ def main(force=False):
     cand = [r for r in rows if r["group"] == "main"][:28] + [r for r in rows if r["group"] == "rebound"][:12]
     print(f"条件を満たした候補: {len(rows)}（詳細を調べる {len(cand)}）")
 
-    # 3. 候補ごとの業績・決算・ニュース
-    def fetch_detail(c):
-        return c, dict(top=S.kabutan_top(c), hist=S.kabutan_margin_hist(c), news=S.kabutan_news(c),
-                       fin=S.kabutan_finance(c), cons=S.kabuyoho(c))
-
-    from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        detail = dict(ex.map(fetch_detail, [r["code"] for r in cand]))
+    # 3. 候補ごとの業績・決算・ニュース（表示する数（本命型14・投げ一巡型8）を先に埋める順で調べる）
+    mn, rb = [r for r in cand if r["group"] == "main"], [r for r in cand if r["group"] == "rebound"]
+    detail = fetch_details([r["code"] for r in mn[:14] + rb[:8] + mn[14:] + rb[8:]])
     picks = []
     for r in cand:
         c = r["code"]
-        dt = detail[c]
+        dt = detail.get(c)
+        if dt is None:      # 時間内に調べきれなかった候補は、今回は外す
+            continue
         top, hist = dt["top"], dt["hist"]
         hist = [h for h in hist if h["d"] not in {f"{b[2:4]}/{b[4:6]}/{b[6:]}" for b in bad}]
         if r["rate4"] is None and len(hist) >= 10 and hist[0]["b"]:

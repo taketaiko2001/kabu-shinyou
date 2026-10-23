@@ -428,7 +428,7 @@ def earnings(pf):
         if p["acct"] == "day":
             continue
         try:
-            e = S.kabutan_top(p["code"]).get("earn", "")
+            e = (S.cached("top", p["code"], S.kabutan_top, 1) or {}).get("earn", "")   # 大引け後に1回だけ読み直す
             if e:
                 p["earn"] = e.replace("/", "-")
         except Exception:

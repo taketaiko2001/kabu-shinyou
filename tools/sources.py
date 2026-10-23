@@ -3,10 +3,15 @@
 どの関数も、取得や解析に失敗したら例外を投げずに None / 空を返す。
 呼び出し側は「取れなかった項目は使わない」前提で組み立てる。
 """
+import atexit
 import io
+import json
+import os
 import re
+import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
@@ -21,12 +26,34 @@ SESSION = requests.Session()
 SESSION.headers.update(UA)
 
 
+# サイトごとの読み込みの最小間隔（秒、前の読み込みの開始から）。株探は robots.txt の Crawl-delay: 3 に合わせる。
+# 株予報は Crawl-delay: 72000 の指定なので、結果を数日使い回して読む回数を減らしている（扱いは市原さんと相談中）。
+MIN_GAP = {"kabutan.jp": 3.0, "kabuyoho.jp": 3.0}
+_pace_lock = {h: threading.Lock() for h in MIN_GAP}
+_last = {}
+
+
+def _pace(url):
+    host = urlparse(url).hostname or ""
+    for h, gap in MIN_GAP.items():
+        if host == h or host.endswith("." + h):
+            with _pace_lock[h]:
+                w = _last.get(h, 0) + gap - time.monotonic()
+                if w > 0:
+                    time.sleep(w)
+                _last[h] = time.monotonic()
+            return True
+    return False
+
+
 def get(url, binary=False, tries=3, wait=0.35, timeout=30):
     for i in range(tries):
+        paced = _pace(url)
         try:
             r = SESSION.get(url, timeout=timeout)
             if r.status_code == 200:
-                time.sleep(wait)
+                if not paced:
+                    time.sleep(wait)
                 return r.content if binary else r.text
             if r.status_code == 404:
                 return None
@@ -34,6 +61,90 @@ def get(url, binary=False, tries=3, wait=0.35, timeout=30):
             pass
         time.sleep(2 * (i + 1))
     return None
+
+
+# ---------------------------------------------------------------- 読んだ結果の使い回し（data/cache/kabutan.json）
+# 業績・信用残の推移・決算日などは1日に何度も変わらないので、読んだ結果を保存して次の回も使い、株探を読む回数を減らす。
+# ニュースは毎回読む。保存は変更があったときだけ、終了時に行う（Claude の更新がコミットする）。
+JST = timezone(timedelta(hours=9))
+CACHE_F = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cache", "kabutan.json")
+_cache = None
+_cache_dirty = False
+_cache_lk = threading.Lock()
+
+
+def _dec(o):
+    return datetime.fromisoformat(o["__dt"]) if "__dt" in o else o
+
+
+def _cache_all():
+    global _cache
+    if _cache is None:
+        try:
+            with open(CACHE_F, encoding="utf-8") as f:
+                _cache = json.load(f, object_hook=_dec)
+        except (OSError, ValueError):
+            _cache = {}
+    return _cache
+
+
+def cache_get(kind, code):
+    """(読んだ時刻, 値) か None。"""
+    with _cache_lk:
+        e = _cache_all().get(f"{kind}:{code}")
+    if not e:
+        return None
+    return datetime.strptime(e["t"], "%Y-%m-%d %H:%M").replace(tzinfo=JST), e["v"]
+
+
+def cache_put(kind, code, v):
+    global _cache_dirty
+    with _cache_lk:
+        c = _cache_all()
+        c[f"{kind}:{code}"] = {"t": datetime.now(JST).strftime("%Y-%m-%d %H:%M"), "v": v}
+        if not _cache_dirty:
+            atexit.register(cache_save)
+        _cache_dirty = True
+
+
+def cache_save():
+    global _cache_dirty
+    with _cache_lk:
+        if not _cache_dirty:
+            return
+        lim = (datetime.now(JST) - timedelta(days=40)).strftime("%Y-%m-%d")
+        c = {k: e for k, e in _cache_all().items() if e["t"] >= lim}
+        os.makedirs(os.path.dirname(CACHE_F), exist_ok=True)
+        with open(CACHE_F, "w", encoding="utf-8") as f:
+            json.dump(c, f, ensure_ascii=False, indent=0, sort_keys=True,
+                      default=lambda o: {"__dt": o.isoformat()} if isinstance(o, datetime) else str(o))
+        _cache_dirty = False
+
+
+def close_cutoff(n=1, now=None):
+    """直近 n 回目の大引け後（営業日の15:30）の時刻。これより後に読んだ値は、まだ新しいとみなす。"""
+    import trade as T
+    t = now or datetime.now(JST)
+    d = t.date() if (t.hour, t.minute) >= (15, 30) else t.date() - timedelta(days=1)
+    k = 0
+    while True:
+        if T.is_trading(d):
+            k += 1
+            if k >= n:
+                return datetime(d.year, d.month, d.day, 15, 30, tzinfo=JST)
+        d -= timedelta(days=1)
+
+
+def cached(kind, code, fn, n=1):
+    """直近 n 回目の大引け後に読んだ値があればそれを、なければ読み直して保存する。読めなければ古い値を返す。"""
+    e = cache_get(kind, code)
+    if e and e[0] >= close_cutoff(n):
+        return e[1]
+    v = fn(code)
+    if v:
+        cache_put(kind, code, v)
+        return v
+    return e[1] if e else v
 
 
 def num(s):
