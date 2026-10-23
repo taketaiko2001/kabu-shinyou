@@ -108,7 +108,8 @@ def report(d):
         earn = f"決算{e['earn'][5:]} 上がる確率{e['P']}% {e['action']}" if e.get("earn") else "決算は保有期間外か未発表"
         print(f"[{s['grade']}/{'需給改善' if s['group'] == 'main' else '投げ一巡'}] {s['code']} {s['name']} "
               f"現{s['price']:,.0f} 買{L['entry']:,} 損{L['stop']:,} 利{L['tp1']:,}/{L['tp2']:,} 期待値{s['ev']:+.1f}% "
-              f"RSI{s['rsi']:.0f} 25日線乖離{s['dev25']:+.1f}% 売買代金{s['val20']:.1f}億")
+              f"RSI{s['rsi']:.0f} 25日線乖離{s['dev25']:+.1f}% 売買代金{s['val20']:.1f}億 "
+              f"ATR{s['atr']:,.0f}（現在値は買い目安の{(s['price'] - L['entry']) / s['atr']:+.1f}ATR）")
         print("   " + earn)
         fl = flags(s)
         if fl:
