@@ -1,0 +1,19 @@
+# 接続テスト：GitHub Actions から株価（Yahoo）と株探が取れるかを確かめる（売買はしない）。
+# .github/probe.txt を書き換えて push すると動く。
+name: probe
+on:
+  push:
+    paths: [".github/probe.txt"]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -q -r tools/requirements.txt
+      - run: python tools/auto.py --probe

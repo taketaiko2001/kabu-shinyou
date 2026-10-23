@@ -325,7 +325,24 @@ def rule_swing(pf, t, dry, out, B):
         have.add(c)
 
 
+def probe():
+    """GitHub Actions などから、株価（Yahoo）と株探（PTS）が取れるかだけ確かめる。"""
+    ok = True
+    x = T.bars(["7203"]).get("7203")
+    print("Yahoo 1分足:", "取れない" if x is None or not len(x) else f"{len(x)}本・最後 {x.index[-1]:%m/%d %H:%M}")
+    ok &= x is not None and len(x) > 0
+    d = T.daily(["7203"]).get("7203")
+    print("Yahoo 日足:", "取れない" if d is None or not len(d) else f"最後 {d.index[-1]:%m/%d} 終値 {float(d.Close.iloc[-1]):,.1f}")
+    ok &= d is not None and len(d) > 0
+    q = pts("7203")
+    print("株探 PTS:", q if q else "取れない")
+    ok &= bool(q)
+    return 0 if ok else 1
+
+
 def main(argv):
+    if "--probe" in argv:
+        return probe()
     dry = "--dry" in argv
     t = T.now()
     if not T.is_trading(t.date()):
