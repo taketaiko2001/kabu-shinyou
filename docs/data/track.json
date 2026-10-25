@@ -26,7 +26,7 @@
 "status": "open",
 "fill_date": "2026-10-23",
 "fill": 8505.0,
-"pnl": -0.09,
+"pnl": 0.4,
 "note": "保有中"
 },
 {
@@ -77,7 +77,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 2790.0,
-"pnl": -3.05,
+"pnl": -3.12,
 "note": "保有中"
 },
 {
@@ -94,7 +94,7 @@
 "status": "open",
 "fill_date": "2026-10-23",
 "fill": 1571.0,
-"pnl": -0.89,
+"pnl": -1.4,
 "note": "保有中"
 },
 {
@@ -111,7 +111,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 750.0,
-"pnl": -0.27,
+"pnl": -0.8,
 "note": "保有中"
 },
 {
@@ -164,7 +164,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 3505.0,
-"pnl": -0.71,
+"pnl": -0.57,
 "note": "保有中"
 },
 {
@@ -194,7 +194,7 @@
 "status": "open",
 "fill_date": "2026-10-22",
 "fill": 1189.0,
-"pnl": -1.18,
+"pnl": -1.68,
 "note": "保有中"
 },
 {
@@ -408,6 +408,45 @@
 "stop": 462,
 "tp1": 527,
 "tp2": 559,
+"status": "waiting"
+},
+{
+"id": "20261026_4480",
+"code": "4480",
+"name": "メドレー",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-26",
+"entry": 2375,
+"stop": 2247,
+"tp1": 2504,
+"tp2": 2631,
+"status": "waiting"
+},
+{
+"id": "20261026_7238",
+"code": "7238",
+"name": "曙ブレーキ工業",
+"group": "main",
+"grade": "次点",
+"created": "2026-10-26",
+"entry": 101,
+"stop": 96,
+"tp1": 105,
+"tp2": 110,
+"status": "waiting"
+},
+{
+"id": "20261026_3922",
+"code": "3922",
+"name": "ＰＲ ＴＩＭＥＳ",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-10-26",
+"entry": 2290,
+"stop": 2163,
+"tp1": 2419,
+"tp2": 2546,
 "status": "waiting"
 }
 ]
