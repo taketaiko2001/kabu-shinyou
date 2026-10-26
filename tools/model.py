@@ -47,6 +47,7 @@ def technicals(x, n225, d_from, d_to, today_partial):
     r["pre20"] = ((c.iloc[-1] / c.iloc[i20]) - (n_now / n225.Close.asof(c.index[i20]))) * 100
     r["vol20"] = float(full.Volume.iloc[-20:].mean())
     r["val20"] = float((full.Volume * full.Close).iloc[-20:].mean() / 1e8)
+    r["val5"] = float((full.Volume * full.Close).iloc[-5:].mean() / 1e8)      # 直近5日（注目度の変化を見る）
     r["up"] = bool(r["price"] > r["ma75"] and r["ma25"] > r["ma75"])
     r["above200"] = bool(r["price"] > r["ma200"])
     r["dev25"] = (r["price"] / r["ma25"] - 1) * 100

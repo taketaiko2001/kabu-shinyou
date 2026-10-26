@@ -15,6 +15,7 @@
    - 終了コードが0以外なら `git checkout -- docs data` で元に戻し、エラーの要点（接続拒否ならドメイン名）を1行で報告する（推測値でファイルを作らない）。ページは「予定の更新が届いていません」と自動で表示する。そのうえで手順7の a（status）と f（publish）だけを行い（新しい買いはしない。ただし朝の回は b の auto.py も行う）、`data/trade` と `docs/data/portfolio.json` だけをコミットして終了する。
 4. **点検**：`python3 tools/check.py` を実行し、点検結果と本命・次点の一覧（決算の材料・ニュース・「基準に当たる点」）を読む。営業日の数も check.py の出力を使い、自分で計算し直さない。
    続けて `python3 tools/market.py` で、市場全体の流れ（米国株・半導体指数・金利・ドル円・日経平均先物と、株探の市況ニュース）を読む。要点は notes の `market` に1文で入れ、仮想売買の判断（長期保有、スイングの悪材料）にも使う。
+   続けて `python3 tools/opinion.py`（Bashの timeout は 300000）で、銘柄ごとの「世間の評価」（機関の空売り・SNSの個人の声・Wikipediaの関心・売買代金の増え方・信用買いの増減）を読む。見立てでの使い方は下の「見立ての基準」。失敗しても更新は続ける。
 5. **見立て**：本命・次点の各銘柄に、下の基準で「買い候補／慎重／見送り」を付け、`docs/data/notes.json` を書く（下の形式）。
 6. **確認**：`python3 tools/check.py --push` がエラーなく1行を出すこと（views の書き漏れ・updated の不一致の確認）。エラーなら notes.json を直して再実行する。**通知（PushNotification）は送らない**（市原さんの希望。ページの更新だけでよい）。
 7. **仮想売買**（下の「仮想売買のルール」に従う）
@@ -34,6 +35,7 @@
 - **見送り**（今回は買わない）：悪材料のニュース（下方修正、不祥事、公募増資・売出し、監理・整理銘柄、TOBの条件決定など）がある／データが明らかにおかしい（株価や業績の桁違い、日付が古い）。
 - **慎重**（株数を減らすか様子を見る）：決算まで10営業日以内で、決算前に売る判定（半分以上／全部）のため値幅を取れる期間が短い／決算で上がる確率が45%以下／経営統合やTOBの思惑など、需給以外の材料で値動きが決まりやすい／業績データが取れていない／目標株価を上回っている／目標株価までの余地が大きすぎる（+60%以上。分割前の古い目標株価など、データの誤りの可能性）／進捗が前年同期より大きく遅れ、期待値も小さい（+0.8%未満）。check.py の「基準に当たる点」は機械的な目安で、最終判断はニュースも見て行う。
 - **買い候補**：上のどれにも当たらない。売買代金が少ない（1日5億円未満）・値動きが大きいときは、買い候補のまま「株数は控えめに」と書く。
+- **世間の評価**（opinion.py）：ひとつの情報だけで見立てを変えない。需給・業績・ニュースと同じ向きのときに「理由の補強」として使い、逆の向きのときは `stocks` の文で触れる。どれも予想に効くかは未検証（2026-10-26 開始。data/opinion/ に毎日記録し、1〜2か月たったら効き目を検証する）。目安：SNSの投資の話題やWikipediaの閲覧が急に増え（先月の2〜3倍以上）、株価も急に上がっている銘柄は、過熱の可能性として「慎重」の理由になる。格下げ・目標株価引き下げの話題が続く、機関の空売りが増えている（増やした機関が多く合計1%以上）銘柄は注意点として書く。SNSの投稿はうわさやデマも混じるので、事実はニュース・開示で確かめる。
 - 相場全体の注意（停止ラインが近いなど）は `market` に書き、個別の見立てには混ぜない。check.py の点検に「取れていない」「古い」が出たら、`market` の冒頭でその旨を伝える。
 - 日経平均が新規買い停止ラインを下回っているときは、`market` の最初の文でそれを伝え、「新規の買いはラインの回復を待つ」と書く。
 
@@ -82,6 +84,7 @@
 - `tools/check.py`：latest.json の点検（データの欠け・古さ・見立ての基準に当たる点）。`--push` は見立ての書き漏れ確認と要約1行。
 - `tools/trade.py`：仮想売買の記録と約定の計算。作業用は `data/trade/portfolio.json`、ページ用は `docs/data/portfolio.json`（`publish` で更新）。使い方はファイル冒頭。約定は注文時刻より後の最初の1分足の始値（Yahooは15〜20分遅れなので、約定は次の処理で確定する）。9:00前の注文は寄り付き（始値）で約定。
 - `tools/market.py`：市場全体の流れ（海外市場・為替・日経平均先物・株探の市況ニュース）を表示する。
+- `tools/opinion.py`：世間の評価（JPX の空売り残高・Bluesky・Wikipedia の閲覧数・売買代金・信用買い）。`docs/data/opinion.json`（ページの「世間の評価」）と `data/opinion/YYYYMMDD.json`（検証用の記録）に書く。Bluesky は環境変数 BSKY_HANDLE・BSKY_APP_PASSWORD があればログインして使う。
 - `tools/auto.py`：機械的な売買ルール（M1・P1・スイング）。`--dry` で注文せずに表示。ルールの値は `data/trade/day_rules.json`。
 - `data/trade/journal.json`：15:30の回の振り返り（`trade.py journal`）。publish で直近10件がページに出る。
 - `tools/daylab.py`：デイトレードの形の検証（日足3年・5分足60日・実際の成績）。`docs/data/daylab.json` に書き、ページの「デイトレードの検証」に出る。
@@ -102,4 +105,5 @@
 - 株価は Yahoo Finance を優先し、取れない銘柄だけ stooq で補う。ただし stooq は2026/10からブラウザ確認の画面を返すようになり、補完はほぼ効かない。
 - Yahoo の日経平均（^N225）は行が抜けたり古い値のままになることがある（2026/10/23 9:02 の更新で10/21の値を最新として使った）。run.py は株探の日経平均ページで直近を上書きし、それでも株価より古ければ meta.warn に残す（check.py の点検とページの注意欄に出る）。
 - ネットワークは環境の Network access で次のドメインを許可しておく必要がある：
-  www.jpx.co.jp, kabutan.jp, kabuyoho.jp, finance.yahoo.com, query1.finance.yahoo.com, query2.finance.yahoo.com, fc.yahoo.com, guce.yahoo.com, consent.yahoo.com, stooq.com（pip用のpypi.org等は「Allow package managers」で許可される）
+  www.jpx.co.jp, kabutan.jp, kabuyoho.jp, finance.yahoo.com, query1.finance.yahoo.com, query2.finance.yahoo.com, fc.yahoo.com, guce.yahoo.com, consent.yahoo.com, stooq.com,
+  api.bsky.app, bsky.social, wikimedia.org, query.wikidata.org, ja.wikipedia.org（世間の評価。許可がないと opinion.py はその分を飛ばす）（pip用のpypi.org等は「Allow package managers」で許可される）

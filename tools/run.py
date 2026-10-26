@@ -496,7 +496,7 @@ def main(force=False):
                 screened=len(df), universe=len(uni), passed=len(rows), studied=len(picks),
                 ev_atr=M.EV_ATR, snap_4w=snap_date or "", excluded=bad, warn=warn)
     keep = ("code name mkt sector desc per pbr yld group grade score price prev atr atrp rate rate_days rate4 rate4_src pchg rs rsi dev25 "
-            "ma25 ma75 ma200 up above200 buy0 buy1 sell0 sell1 ratio0 ratio1 dc0 dc1 val20 lv earnv ev ev_tech ev_earn "
+            "ma25 ma75 ma200 up above200 buy0 buy1 sell0 sell1 ratio0 ratio1 dc0 dc1 val20 val5 lv earnv ev ev_tech ev_earn "
             "pros cons news mh dates close").split()
     out = dict(meta=meta, market=market, stocks=[{k: r.get(k) for k in keep} for r in final], calendar=cal,
                evidence=EVIDENCE, track=dict(summary=summ, recent=[p for p in log][-30:][::-1]))

@@ -167,6 +167,18 @@ input[type=number]{width:150px;font-family:var(--f-num)}
 .why li{font-size:14px;color:var(--ink-2)}
 .why h4{font-size:13px;font-weight:700}
 .why .pro h4{color:var(--good)} .why .con h4{color:var(--bad)}
+.opn{border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:6px}
+.opn h4{font-size:13px;font-weight:700;color:var(--ink)}
+.opn h4 small{font-weight:400;color:var(--ink-3);font-size:12px}
+.opn-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin:0}
+.opn-g div{min-width:0}
+.opn-g dt{font-size:12px;color:var(--ink-3);font-weight:700}
+.opn-g dd{margin:0;font-size:13px;color:var(--ink-2)}
+@media (max-width:460px){.opn-g{grid-template-columns:1fr}}
+.opn ul{margin:0;padding:0;list-style:none;display:grid;gap:3px}
+.opn li{font-size:13.5px;color:var(--ink-2);padding-left:1.5em;text-indent:-1.5em}
+.opn li b{display:inline-block;width:1.5em;text-indent:0;font-weight:700}
+.opn li.u b{color:var(--good)} .opn li.d b{color:var(--bad)} .opn li.w b{color:var(--warn)}
 .ai{font-size:13.5px;color:var(--ink-2);border-left:3px solid var(--accent);padding-left:10px}
 .ai .pill{margin-right:6px}
 .vw-買い候補{background:var(--good-soft);color:var(--good)}
@@ -283,6 +295,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
         <li><b>確認する時刻</b>：朝8:30ごろ（寄り付き前）・10:07・11:07・12:30・13:37・14:37・15:30に、約定・損切り・利確・新しい買いを確認します。朝・12:30・15:30はAI（Claude）が海外市場・市況ニュース・個別のニュースも見て判断し、10:07・11:07・13:37・14:37は決めたルールどおりにプログラムが確認します。</li>
         <li><b>このページの更新</b>：朝8:45ごろ・12:30すぎ・15:30すぎの3回です。その間の売買は、次の更新でまとめて表示されます（15:30の更新は大引け値を待つので16時ごろ届きます）。</li>
         <li><b>計算の前提</b>：100株単位・現物のみ。手数料と税金は0円として計算しています。</li>
+        <li><b>世間の評価</b>：銘柄ごとに、機関投資家の空売り（JPX）、個人の声（SNSのBluesky）、世間の関心（Wikipediaの閲覧数）、注目度（売買代金の増え方）、個人の信用買いを集めて表示し、AIの見立ての材料の1つにしています。ひとつの情報だけでは判断しません。予想に効くかは毎日記録して検証中です。</li>
       </ol>
     </details>
   </section>
@@ -397,7 +410,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
   const store={get(k,d){try{const v=localStorage.getItem('kaizan.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('kaizan.'+k,JSON.stringify(v))}catch(e){}}};
   const st={g:store.get('g','main'),sort:store.get('sort','rec'),hide:store.get('hide',false),cap:store.get('cap',1000000),risk:store.get('risk',1)};
   $('sort').value=st.sort; $('hideEarn').checked=st.hide; $('cap').value=st.cap; $('riskPct').value=st.risk;
-  let D=null, NOTES=null;
+  let D=null, NOTES=null, OPN=null;
   const gradeRank={'本命':0,'次点':1,'監視':2};
   const volClass=a=>a<2.5?'小':a<4?'中':'大';
   const md=s=>s?s.slice(5).replace('-','/'):'';
@@ -409,6 +422,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       if(!r.ok) throw new Error('HTTP '+r.status);
       D=await r.json();
       try{const n=await fetch(RAW('notes.json'),{cache:'no-store'});NOTES=n.ok?await n.json():null}catch(e){NOTES=null}
+      try{const n=await fetch(RAW('opinion.json'),{cache:'no-store'});OPN=n.ok?await n.json():null}catch(e){OPN=null}
       try{const q=await fetch(RAW('portfolio.json'),{cache:'no-store'});paintPf(q.ok?await q.json():null)}catch(e){paintPf(null)}
       try{const q=await fetch(RAW('daylab.json'),{cache:'no-store'});paintLab(q.ok?await q.json():null)}catch(e){paintLab(null)}
       paint();
@@ -500,7 +514,7 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       const lim=p.acct==='day'?'今日の大引けで決済':p.acct==='swing'?`期限 ${md(p.deadline)} の大引け`:'期限なし';
       return `<div class="pos-i"><div class="h"><span class="pill ac-${p.acct}">${ACN[p.acct]}</span><b>${esc(p.code)} ${esc(p.name)}</b><span class="num">${fmt(p.shares)}株</span></div>
         <div class="l">買値 ${fmt(p.avg,1)} → 現在 ${fmt(p.last,1)}　<span class="${pc(r)}">${sgn(r,2)}%（${sgn(y,0)}円）</span></div>
-        <div class="m">損切り ${p.stop?fmt(p.stop)+'円':'なし'}・${lim}・買った日時 ${dt(p.opened)}</div><div class="r">理由：${esc(p.reason)}</div></div>`}).join(''):'<div class="empty">いまは保有していません（全額現金）。</div>';
+        <div class="m">損切り ${p.stop?fmt(p.stop)+'円':'なし'}・${lim}・買った日時 ${dt(p.opened)}</div><div class="r">理由：${esc(p.reason)}</div>${posOpn(p.code)}</div>`}).join(''):'<div class="empty">いまは保有していません（全額現金）。</div>';
     const os=P.orders||[];$('pfOrdW').hidden=!os.length;
     $('pfOrd').innerHTML=os.map(o=>`<div class="pos-i"><div class="h"><span class="pill ac-${o.acct}">${ACN[o.acct]}</span><b>${o.side==='buy'?'買い':'売り'} ${esc(o.code)} ${esc(o.name)}</b><span class="num">${fmt(o.shares)}株</span></div>
       <div class="m">成行・注文 ${dt(o.time)}（注文時の株価 ${fmt(o.est,1)}円）。約定の値段は次の更新で確定します。</div><div class="r">理由：${esc(o.reason)}</div></div>`).join('');
@@ -590,12 +604,40 @@ footer{font-size:12.5px;color:var(--ink-3);display:grid;gap:6px;max-width:80ch}
       </dl>
       <div class="why"><div class="pro"><h4>上がると見る理由</h4><ul>${(s.pros||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
         <div class="con"><h4>注意点</h4><ul>${(s.cons||[]).map(t=>`<li>${esc(t)}</li>`).join('')||'<li>特になし</li>'}</ul></div></div>
+      ${opnBox(s.code)}
       <details data-code="${s.code}"><summary>チャート・信用残の推移・ニュースを見る</summary><div class="charts">
         <div><div class="chart-t">株価（終値・直近60営業日）と売買ライン</div><div class="chart" data-k="px"></div></div>
         <div><div class="chart-t">信用買い残の推移（日次・株）</div><div class="chart" data-k="mh"></div></div>
         ${(s.news||[]).length?`<div><div class="chart-t">直近のニュース（株探）</div><ul class="news">${s.news.map(n=>`<li>${esc(n.t.slice(0,8))} ${esc(n.h)}</li>`).join('')}</ul></div>`:''}
       </div></details>
     </article>`;
+  }
+  // 世間の評価（tools/opinion.py。実際のお金の動きと世間の声・関心。予想に効くかは未検証）
+  function opnLines(e){
+    const g=[];
+    const sh=e.shorts;
+    if(sh)g.push(['機関の空売り',sh.n?`報告${sh.n}件（増やした${sh.up}・減らした${sh.down}）・報告のある機関の合計${fmt(sh.total,2)}%`:'直近3週間の報告なし']);
+    const b=e.bsky;
+    if(b)g.push(['個人の声（Bluesky）',b.n28?`投資の話題 1週間${b.n7}件（前の3週は週${fmt(b.wk_prev,1)}件）・良い話${b.pos}・悪い話${b.neg}`+(b.r_up||b.r_dn?`・格上げ${b.r_up}/格下げ${b.r_dn}`:''):'直近4週の話題なし']);
+    const w=e.wiki;
+    if(w)g.push(['世間の関心（Wikipedia）',`閲覧 1日${fmt(w.avg7)}回`+(w.ratio?`（先月の${fmt(w.ratio,1)}倍）`:'')]);
+    if(e.turnover)g.push(['注目度（売買代金）',`直近5日は20日平均の${fmt(e.turnover,1)}倍`]);
+    return g;
+  }
+  function posOpn(code){
+    const e=OPN&&OPN.stocks&&OPN.stocks[code];
+    if(!e)return '';
+    const n=e.notes||{},t=[...(n.up||[]).map(x=>'＋'+x),...(n.down||[]).map(x=>'－'+x),...(n.warn||[]).map(x=>'！'+x)];
+    const g=opnLines(e).map(([k,v])=>k.replace(/（.*）/,'')+'：'+v);
+    return `<div class="m">世間の評価（${esc(OPN.updated.slice(5).replace('-','/'))}）：${esc((t.length?t:g.slice(0,2)).join('／'))}</div>`;
+  }
+  function opnBox(code){
+    const e=OPN&&OPN.stocks&&OPN.stocks[code];
+    if(!e)return '';
+    const n=e.notes||{},li=[...(n.up||[]).map(t=>['u','＋',t]),...(n.down||[]).map(t=>['d','－',t]),...(n.warn||[]).map(t=>['w','！',t])];
+    return `<div class="opn"><h4>世間の評価 <small>${esc(OPN.updated.slice(5).replace('-','/'))}時点・参考（予想に効くかは検証中）</small></h4>
+      <dl class="opn-g">${opnLines(e).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+      ${li.length?`<ul>${li.map(([c,m,t])=>`<li class="${c}"><b aria-hidden="true">${m}</b>${esc(t)}</li>`).join('')}</ul>`:''}</div>`;
   }
   function renderCards(ai){
     if(!D)return;
