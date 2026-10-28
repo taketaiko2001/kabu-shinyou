@@ -56,6 +56,18 @@ def fetch(url, params=None, timeout=20, wait=0.0, binary=False, headers=None, me
         return None
     if wait:
         time.sleep(wait)
+    if r.status_code == 429 and not method == "POST":     # 回数の制限：相手の指定する時間（最大15秒）待って1回だけやり直す
+        try:
+            ra = min(15.0, float(r.headers.get("Retry-After", "5")))
+        except ValueError:
+            ra = 5.0
+        time.sleep(ra)
+        try:
+            r = S.get(url, params=params, timeout=timeout, headers=headers)
+        except requests.RequestException as e:
+            print(f"  {host} に接続できない（{type(e).__name__}）。この回は使わない")
+            DEAD[host] = type(e).__name__
+            return None
     if r.status_code in (401, 403, 407, 429):
         print(f"  {host} が {r.status_code} を返した。この回は使わない")
         DEAD[host] = f"HTTP {r.status_code}"
@@ -181,7 +193,7 @@ def pageviews(title):
     from urllib.parse import quote
     a, b = (NOW - timedelta(days=62)).strftime("%Y%m%d"), (NOW - timedelta(days=1)).strftime("%Y%m%d")
     r = fetch(f"https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/ja.wikipedia/all-access/user/"
-              f"{quote(title.replace(' ', '_'), safe='')}/daily/{a}/{b}", wait=0.2)
+              f"{quote(title.replace(' ', '_'), safe='')}/daily/{a}/{b}", wait=1.0)
     if r is None:
         return None
     v = [x["views"] for x in r.json().get("items", [])]
@@ -324,11 +336,13 @@ def main():
         e["rate4"] = v.get("rate4")
         e["notes"] = notes(e)
         res[c] = e
-    why = lambda key: "取れなかった" + ("（" + "・".join(f"{h}: {r}" for h, r in DEAD.items() if key in h) + "）"
-                                       if any(key in h for h in DEAD) else "")
+    def why(key, ok):                    # 取れなかった理由（一部の銘柄だけ取れなかったときも残す）
+        r = "・".join(f"{h}: {x}" for h, x in DEAD.items() if key in h)
+        return (f"（途中から取れなかった：{r}）" if r else "") if ok else "取れなかった" + (f"（{r}）" if r else "")
+    wk, bk = any("wiki" in e for e in res.values()), any("bsky" in e for e in res.values())
     src = dict(shorts=f"JPX 空売り残高（{sh.get('_from', '')}〜{sh.get('_to', '')}公表の{sh.get('_files', 0)}日分）" if sh else "取れなかった",
-               wiki="Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if any("wiki" in e for e in res.values()) else why("wiki"),
-               bsky=f"Bluesky（{how}・直近4週の投資の話題）" if any("bsky" in e for e in res.values()) else why("bsky"))
+               wiki=("Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if wk else "") + why("wiki", wk),
+               bsky=(f"Bluesky（{how}・直近4週の投資の話題）" if bk else "") + why("bsky", bk))
     out = dict(updated=NOW.strftime("%Y-%m-%d %H:%M"), sources=src, stocks=res,
                note="どれも株価の予想に効くかはまだ検証していません。ひとつの情報に頼らず、見立ての材料の1つとして使います。")
     with open(OUT, "w", encoding="utf-8") as f:
@@ -358,6 +372,9 @@ def main():
         for x in samples.get(c, []):
             print(f"    （SNS）{x}")
     print(f"書き出し: docs/data/opinion.json・data/opinion/{NOW:%Y%m%d}.json（{time.time() - t0:.0f}秒）")
+    print(f"取れた銘柄: 空売り{sum(1 for e in res.values() if e.get('shorts', {}).get('n'))}・"
+          f"Wikipedia{sum('wiki' in e for e in res.values())}・Bluesky{sum('bsky' in e for e in res.values())}／{len(res)}銘柄"
+          + ("　つながらなかった: " + "・".join(f"{h}（{x}）" for h, x in DEAD.items()) if DEAD else ""))
     print("使い方：どれも予想に効くかは未検証。見立てでは、ひとつの情報だけで決めず、需給・業績・ニュースと合わせて判断の材料にする。")
     return 0
 
