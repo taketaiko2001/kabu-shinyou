@@ -1,8 +1,8 @@
 {
- "updated": "2026-10-28 12:50",
+ "updated": "2026-10-28 15:51",
  "sources": {
   "shorts": "JPX 空売り残高（20261006〜20261027公表の15日分）",
-  "wiki": "取れなかった",
+  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
@@ -16,6 +16,13 @@
     "total": 0.82,
     "last": "10/13"
    },
+   "wiki": {
+    "title": "澁澤倉庫",
+    "avg7": 26,
+    "avg28": 32,
+    "ratio": 0.82,
+    "max7": 34
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.3,
@@ -25,7 +32,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.73,
+   "turnover": 0.7,
    "rate4": null,
    "notes": {
     "up": [],
@@ -43,6 +50,13 @@
     "total": 0.91,
     "last": "10/14"
    },
+   "wiki": {
+    "title": "京阪ホールディングス",
+    "avg7": 82,
+    "avg28": 53,
+    "ratio": 1.55,
+    "max7": 150
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -52,7 +66,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.99,
+   "turnover": 1.13,
    "rate4": null,
    "notes": {
     "up": [],
@@ -72,14 +86,14 @@
    },
    "bsky": {
     "n7": 0,
-    "wk_prev": 0.0,
+    "wk_prev": 0.3,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 0
+    "n28": 1
    },
-   "turnover": 1.09,
+   "turnover": 0.98,
    "rate4": null,
    "notes": {
     "up": [
@@ -99,16 +113,23 @@
     "total": 1.25,
     "last": "10/22"
    },
+   "wiki": {
+    "title": "東北電力",
+    "avg7": 65,
+    "avg28": 62,
+    "ratio": 1.04,
+    "max7": 93
+   },
    "bsky": {
     "n7": 0,
-    "wk_prev": 0.0,
+    "wk_prev": 0.3,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 0
+    "n28": 1
    },
-   "turnover": 0.77,
+   "turnover": 0.8,
    "rate4": null,
    "notes": {
     "up": [
@@ -128,6 +149,13 @@
     "total": 5.81,
     "last": "10/23"
    },
+   "wiki": {
+    "title": "メドレー (企業)",
+    "avg7": 30,
+    "avg28": 38,
+    "ratio": 0.79,
+    "max7": 40
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -137,7 +165,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.94,
+   "turnover": 0.95,
    "rate4": -12.43,
    "notes": {
     "up": [
@@ -153,6 +181,13 @@
    "shorts": {
     "n": 0
    },
+   "wiki": {
+    "title": "東鉄工業",
+    "avg7": 32,
+    "avg28": 38,
+    "ratio": 0.84,
+    "max7": 41
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -162,7 +197,29 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.79,
+   "turnover": 0.8,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "8818": {
+   "name": "京阪神ビルディング",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.86,
    "rate4": null,
    "notes": {
     "up": [],
@@ -189,7 +246,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.18,
+   "turnover": 1.29,
    "rate4": -31.47,
    "notes": {
     "up": [
@@ -219,42 +276,13 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.03,
+   "turnover": 1.01,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [
      "機関の空売りが増えている（報告29件中、増やした18件・合計5.87%）"
     ],
-    "warn": []
-   }
-  },
-  "4392": {
-   "name": "ＦＩＧ",
-   "shorts": {
-    "n": 18,
-    "up": 2,
-    "down": 16,
-    "sellers": 3,
-    "total": 4.87,
-    "last": "10/26"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.7,
-    "pos": 1,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 2
-   },
-   "turnover": 0.44,
-   "rate4": null,
-   "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告18件中、減らした16件）"
-    ],
-    "down": [],
     "warn": []
    }
   },
@@ -277,11 +305,40 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 0.37,
+   "turnover": 0.36,
    "rate4": null,
    "notes": {
     "up": [
      "機関が空売りを減らしている（報告21件中、減らした17件）"
+    ],
+    "down": [],
+    "warn": []
+   }
+  },
+  "4392": {
+   "name": "ＦＩＧ",
+   "shorts": {
+    "n": 18,
+    "up": 2,
+    "down": 16,
+    "sellers": 3,
+    "total": 4.87,
+    "last": "10/26"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 1.0,
+    "pos": 2,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 3
+   },
+   "turnover": 0.42,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告18件中、減らした16件）"
     ],
     "down": [],
     "warn": []
@@ -306,7 +363,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.49,
+   "turnover": 0.5,
    "rate4": -35.91,
    "notes": {
     "up": [
@@ -336,7 +393,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.75,
+   "turnover": 0.68,
    "rate4": null,
    "notes": {
     "up": [],
