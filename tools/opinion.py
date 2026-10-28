@@ -20,6 +20,7 @@ import os
 import re
 import sys
 import time
+import unicodedata
 import warnings
 from datetime import datetime, timedelta, timezone
 
@@ -37,7 +38,7 @@ WIKI_MAP = os.path.join(ROOT, "data", "cache", "wiki_titles.json")
 UA = {"User-Agent": "kabu-shinyou/0.1 (+https://github.com/taketaiko2001/kabu-shinyou; personal stock research)"}
 S = requests.Session()
 S.headers.update(UA)
-DEAD = set()          # つながらなかったサイト（この回はもう読まない）
+DEAD = {}             # つながらなかったサイト → 理由（この回はもう読まない）
 
 
 def fetch(url, params=None, timeout=20, wait=0.0, binary=False, headers=None, method="GET", body=None):
@@ -51,13 +52,13 @@ def fetch(url, params=None, timeout=20, wait=0.0, binary=False, headers=None, me
             r = S.get(url, params=params, timeout=timeout, headers=headers)
     except requests.RequestException as e:
         print(f"  {host} に接続できない（{type(e).__name__}）。この回は使わない")
-        DEAD.add(host)
+        DEAD[host] = type(e).__name__
         return None
     if wait:
         time.sleep(wait)
     if r.status_code in (401, 403, 407, 429):
         print(f"  {host} が {r.status_code} を返した。この回は使わない")
-        DEAD.add(host)
+        DEAD[host] = f"HTTP {r.status_code}"
         return None
     if r.status_code != 200:
         return None
@@ -154,19 +155,21 @@ def wiki_titles(t):
         e = m.get(c)
         if e and (e.get("title") or e.get("t", "") >= (NOW - timedelta(days=30)).strftime("%Y-%m-%d")):
             continue
-        head = re.split(r"[\s　]", v["name"])[0]
+        name = unicodedata.normalize("NFKC", v["name"])      # 全角の英字（Ａｐｐｉｅｒ）を半角にそろえて探す
+        head = re.split(r"\s", name)[0]
         r = fetch("https://ja.wikipedia.org/w/api.php", wait=1.0,
                   params={"action": "query", "list": "search", "srsearch": f'insource:"{c}" {head}', "srlimit": 5, "format": "json"})
+        if r is None:                    # つながらなかった回は「記事なし」と記録しない（次の回に探し直す）
+            continue
         title = ""
-        if r is not None:
-            for h in r.json().get("query", {}).get("search", []):
-                ti = h["title"]
-                stem = re.sub(r"\s*[（(].*?[)）]\s*$", "", ti)
-                if ti.startswith("日本の企業一覧") or "指数" in ti:
-                    continue
-                if stem and (stem in v["name"] or head in stem or stem.replace(" ", "") in v["name"].replace(" ", "")):
-                    title = ti
-                    break
+        for h in r.json().get("query", {}).get("search", []):
+            ti = h["title"]
+            stem = re.sub(r"\s*[（(].*?[)）]\s*$", "", ti)
+            if ti.startswith("日本の企業一覧") or "指数" in ti:
+                continue
+            if stem and (stem in name or head in stem or stem.replace(" ", "") in name.replace(" ", "")):
+                title = ti
+                break
         m[c] = {"title": title, "t": today, "by": "search"}
     os.makedirs(os.path.dirname(WIKI_MAP), exist_ok=True)
     with open(WIKI_MAP, "w", encoding="utf-8") as f:
@@ -209,25 +212,44 @@ def bsky_base():
     return "https://api.bsky.app", None, "ログインなし"
 
 
-def bluesky(code, name, base, hdr, samples):
+def bsky_names(name, title):
+    """検索に使う社名と、投稿の中で探す社名。元データの社名は全角で10文字に切れていることがあるので、
+    半角にそろえ、切れていれば Wikipedia の記事名（正式な社名）か最初の語を使う。"""
+    nk = unicodedata.normalize("NFKC", name).strip()
+    stem = re.sub(r"\s*[（(].*?[)）]\s*$", "", unicodedata.normalize("NFKC", title or "")).strip()
+    cut = len(name) >= 10
+    q = stem if cut and stem else (nk.split()[0] if cut and " " in nk and len(nk.split()[0]) >= 2 else nk)
+    return q, [x for x in dict.fromkeys((q, nk, stem)) if len(x) >= 2]
+
+
+def bluesky(code, name, base, hdr, samples, title=""):
     since = (datetime.now(timezone.utc) - timedelta(days=28)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    codepat = re.compile(r"[<＜(（【\[]\s*" + re.escape(code) + r"\s*[>＞)）】\]]")
+    codepat = re.compile(r"[<(【\[〈《]\s*" + re.escape(code) + r"\s*[>)】\]〉》]")     # 投稿は半角にそろえてから照合
+    qname, names = bsky_names(name, title)
     posts = {}
-    for q in (name, code):
-        r = fetch(base + "/xrpc/app.bsky.feed.searchPosts", headers=hdr, wait=1.0,
-                  params={"q": q, "limit": 100, "sort": "latest", "since": since, "lang": "ja"})
+    ok = 0
+    for q in (qname, code):
+        prm = {"q": q, "limit": 100, "sort": "latest", "since": since, "lang": "ja"}
+        r = fetch(base + "/xrpc/app.bsky.feed.searchPosts", headers=hdr, wait=1.0, params=prm)
+        if r is None and not any("bsky" in h for h in DEAD):          # 一時的な失敗（500など）は1回だけやり直す
+            time.sleep(2)
+            r = fetch(base + "/xrpc/app.bsky.feed.searchPosts", headers=hdr, wait=1.0, params=prm)
         if r is None:
-            return None
+            continue
+        ok += 1
         for p in r.json().get("posts", []):
             posts[p["uri"]] = p
+    if not ok:
+        return None
     rel, seen = [], set()
     for p in posts.values():
-        tx = p["record"].get("text", "")
+        tx = unicodedata.normalize("NFKC", p["record"].get("text", ""))
         key = re.sub(r"\s+", "", tx)[:60]
         if key in seen:                 # 同じ文の投稿（転載・重複）は1件として数える
             continue
         # コードの括弧書きだけでは年号（例「（1835）」）も拾うので、株の話の投稿に限る
-        if (codepat.search(tx) and (name in tx or "株" in tx or INVEST.search(tx))) or (name in tx and INVEST.search(tx)):
+        has_name = any(n in tx for n in names)
+        if (codepat.search(tx) and (has_name or "株" in tx or INVEST.search(tx))) or (has_name and INVEST.search(tx)):
             seen.add(key)
             rel.append((p["record"].get("createdAt", "")[:19], tx))
     cut7 = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S")
@@ -294,7 +316,7 @@ def main():
             pv = pageviews(titles[c])
             if pv:
                 e["wiki"] = dict(title=titles[c], **pv)
-        bs = bluesky(c, v["name"], base, hdr, samples)
+        bs = bluesky(c, v["name"], base, hdr, samples, titles.get(c, ""))
         if bs is not None:
             e["bsky"] = bs
         if v.get("val5") and v.get("val20"):
@@ -302,9 +324,11 @@ def main():
         e["rate4"] = v.get("rate4")
         e["notes"] = notes(e)
         res[c] = e
+    why = lambda key: "取れなかった" + ("（" + "・".join(f"{h}: {r}" for h, r in DEAD.items() if key in h) + "）"
+                                       if any(key in h for h in DEAD) else "")
     src = dict(shorts=f"JPX 空売り残高（{sh.get('_from', '')}〜{sh.get('_to', '')}公表の{sh.get('_files', 0)}日分）" if sh else "取れなかった",
-               wiki="Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if any("wiki" in e for e in res.values()) else "取れなかった",
-               bsky=f"Bluesky（{how}・直近4週の投資の話題）" if any("bsky" in e for e in res.values()) else "取れなかった")
+               wiki="Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if any("wiki" in e for e in res.values()) else why("wiki"),
+               bsky=f"Bluesky（{how}・直近4週の投資の話題）" if any("bsky" in e for e in res.values()) else why("bsky"))
     out = dict(updated=NOW.strftime("%Y-%m-%d %H:%M"), sources=src, stocks=res,
                note="どれも株価の予想に効くかはまだ検証していません。ひとつの情報に頼らず、見立ての材料の1つとして使います。")
     with open(OUT, "w", encoding="utf-8") as f:
