@@ -24,7 +24,12 @@ def overseas():
     print("海外市場・為替（終値ベース。日付は各市場の現地の日付）:")
     for s, n in SYMS:
         try:
-            d = yf.download(s, period="10d", interval="1d", progress=False, auto_adjust=False, threads=False)
+            d = None
+            if s == "^N225":                 # Yahoo だけだと古い値が出ることがある → run.py と同じく株探の直近値で補う
+                import sources as S
+                d = S.index_n225()
+            if d is None:
+                d = yf.download(s, period="10d", interval="1d", progress=False, auto_adjust=False, threads=False)
             if isinstance(d.columns, pd.MultiIndex):
                 d.columns = d.columns.get_level_values(0)
             c = d.Close.dropna()
