@@ -205,6 +205,7 @@ def bsky_base():
                   body={"identifier": h, "password": pw})
         if r is not None:
             return "https://bsky.social", {"Authorization": "Bearer " + r.json()["accessJwt"]}, "ログインあり"
+        print("  Bluesky にログインできなかった。ログインなしで読む")
     return "https://api.bsky.app", None, "ログインなし"
 
 
@@ -225,7 +226,8 @@ def bluesky(code, name, base, hdr, samples):
         key = re.sub(r"\s+", "", tx)[:60]
         if key in seen:                 # 同じ文の投稿（転載・重複）は1件として数える
             continue
-        if codepat.search(tx) or (name in tx and INVEST.search(tx)):
+        # コードの括弧書きだけでは年号（例「（1835）」）も拾うので、株の話の投稿に限る
+        if (codepat.search(tx) and (name in tx or "株" in tx or INVEST.search(tx))) or (name in tx and INVEST.search(tx)):
             seen.add(key)
             rel.append((p["record"].get("createdAt", "")[:19], tx))
     cut7 = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S")
@@ -301,8 +303,8 @@ def main():
         e["notes"] = notes(e)
         res[c] = e
     src = dict(shorts=f"JPX 空売り残高（{sh.get('_from', '')}〜{sh.get('_to', '')}公表の{sh.get('_files', 0)}日分）" if sh else "取れなかった",
-               wiki="Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if "wikimedia.org" not in DEAD else "取れなかった",
-               bsky=f"Bluesky（{how}・直近4週の投資の話題）" if not any("bsky" in d for d in DEAD) else "取れなかった")
+               wiki="Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）" if any("wiki" in e for e in res.values()) else "取れなかった",
+               bsky=f"Bluesky（{how}・直近4週の投資の話題）" if any("bsky" in e for e in res.values()) else "取れなかった")
     out = dict(updated=NOW.strftime("%Y-%m-%d %H:%M"), sources=src, stocks=res,
                note="どれも株価の予想に効くかはまだ検証していません。ひとつの情報に頼らず、見立ての材料の1つとして使います。")
     with open(OUT, "w", encoding="utf-8") as f:
