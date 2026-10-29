@@ -311,7 +311,7 @@
 "status": "open",
 "fill_date": "2026-10-26",
 "fill": 3125.0,
-"pnl": 0.8,
+"pnl": 1.12,
 "note": "保有中"
 },
 {
@@ -412,7 +412,7 @@
 "status": "open",
 "fill_date": "2026-10-26",
 "fill": 1456.0,
-"pnl": 8.65,
+"pnl": 8.93,
 "note": "保有中"
 },
 {
@@ -476,7 +476,7 @@
 "status": "open",
 "fill_date": "2026-10-27",
 "fill": 2375.0,
-"pnl": -1.35,
+"pnl": -0.93,
 "note": "保有中"
 },
 {
@@ -510,7 +510,7 @@
 "status": "open",
 "fill_date": "2026-10-28",
 "fill": 2290.0,
-"pnl": -2.18,
+"pnl": -2.71,
 "note": "保有中"
 },
 {
@@ -613,7 +613,7 @@
 "status": "open",
 "fill_date": "2026-10-29",
 "fill": 2006.0,
-"pnl": 0.25,
+"pnl": 0.15,
 "note": "保有中"
 },
 {
@@ -687,6 +687,45 @@
 "stop": 440,
 "tp1": 490,
 "tp2": 515,
+"status": "waiting"
+},
+{
+"id": "20261030_8061",
+"code": "8061",
+"name": "西華産業",
+"group": "main",
+"grade": "本命",
+"created": "2026-10-30",
+"entry": 2994,
+"stop": 2850,
+"tp1": 3140,
+"tp2": 3280,
+"status": "waiting"
+},
+{
+"id": "20261030_8714",
+"code": "8714",
+"name": "池田泉州ホールディングス",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-30",
+"entry": 936,
+"stop": 881,
+"tp1": 993,
+"tp2": 1048,
+"status": "waiting"
+},
+{
+"id": "20261030_4434",
+"code": "4434",
+"name": "サーバーワークス",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-10-30",
+"entry": 2737,
+"stop": 2530,
+"tp1": 2945,
+"tp2": 3150,
 "status": "waiting"
 }
 ]
