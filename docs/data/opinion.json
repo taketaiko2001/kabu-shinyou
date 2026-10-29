@@ -1,45 +1,11 @@
 {
- "updated": "2026-10-29 12:51",
+ "updated": "2026-10-29 15:50",
  "sources": {
   "shorts": "JPX 空売り残高（20261007〜20261028公表の15日分）",
   "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
-  "9304": {
-   "name": "澁澤倉庫",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/13"
-   },
-   "wiki": {
-    "title": "澁澤倉庫",
-    "avg7": 26,
-    "avg28": 32,
-    "ratio": 0.82,
-    "max7": 34
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 0.72,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
   "3673": {
    "name": "ブロードリーフ",
    "shorts": {
@@ -61,10 +27,76 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.06,
+   "turnover": 1.16,
    "rate4": null,
    "notes": {
     "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "1835": {
+   "name": "東鉄工業",
+   "shorts": {
+    "n": 0
+   },
+   "wiki": {
+    "title": "東鉄工業",
+    "avg7": 30,
+    "avg28": 38,
+    "ratio": 0.79,
+    "max7": 38
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.8,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "4480": {
+   "name": "メドレー",
+   "shorts": {
+    "n": 25,
+    "up": 11,
+    "down": 14,
+    "sellers": 2,
+    "total": 5.77,
+    "last": "10/26"
+   },
+   "wiki": {
+    "title": "メドレー (企業)",
+    "avg7": 28,
+    "avg28": 38,
+    "ratio": 0.75,
+    "max7": 40
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.9,
+   "rate4": -13.72,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告25件中、減らした14件）",
+     "個人の信用買いが減っている（4週で-14%）"
+    ],
     "down": [],
     "warn": []
    }
@@ -95,48 +127,11 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.84,
+   "turnover": 0.92,
    "rate4": null,
    "notes": {
     "up": [
      "機関が空売りを減らしている（報告9件中、減らした5件）"
-    ],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4480": {
-   "name": "メドレー",
-   "shorts": {
-    "n": 25,
-    "up": 11,
-    "down": 14,
-    "sellers": 2,
-    "total": 5.77,
-    "last": "10/26"
-   },
-   "wiki": {
-    "title": "メドレー (企業)",
-    "avg7": 30,
-    "avg28": 38,
-    "ratio": 0.79,
-    "max7": 40
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.98,
-   "rate4": -13.72,
-   "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告25件中、減らした14件）",
-     "個人の信用買いが減っている（4週で-14%）"
     ],
     "down": [],
     "warn": []
@@ -163,36 +158,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.19,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "1835": {
-   "name": "東鉄工業",
-   "shorts": {
-    "n": 0
-   },
-   "wiki": {
-    "title": "東鉄工業",
-    "avg7": 32,
-    "avg28": 38,
-    "ratio": 0.84,
-    "max7": 41
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.84,
+   "turnover": 1.23,
    "rate4": null,
    "notes": {
     "up": [],
@@ -205,13 +171,6 @@
    "shorts": {
     "n": 0
    },
-   "wiki": {
-    "title": "JFEホールディングス",
-    "avg7": 131,
-    "avg28": 135,
-    "ratio": 0.97,
-    "max7": 158
-   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.7,
@@ -221,11 +180,40 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 1.11,
+   "turnover": 1.01,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
+    "warn": []
+   }
+  },
+  "6309": {
+   "name": "巴工業",
+   "shorts": {
+    "n": 8,
+    "up": 6,
+    "down": 2,
+    "sellers": 4,
+    "total": 2.23,
+    "last": "10/21"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.3,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.14,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [
+     "機関の空売りが増えている（報告8件中、増やした6件・合計2.23%）"
+    ],
     "warn": []
    }
   },
@@ -243,7 +231,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.12,
+   "turnover": 1.07,
    "rate4": null,
    "notes": {
     "up": [],
@@ -265,7 +253,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.88,
+   "turnover": 0.84,
    "rate4": null,
    "notes": {
     "up": [],
@@ -292,7 +280,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.51,
+   "turnover": 0.52,
    "rate4": null,
    "notes": {
     "up": [],
@@ -319,7 +307,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.32,
+   "turnover": 1.24,
    "rate4": -31.68,
    "notes": {
     "up": [
@@ -349,7 +337,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.02,
+   "turnover": 0.75,
    "rate4": null,
    "notes": {
     "up": [],
@@ -378,7 +366,7 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 0.36,
+   "turnover": 0.33,
    "rate4": null,
    "notes": {
     "up": [
@@ -407,7 +395,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.5,
+   "turnover": 0.46,
    "rate4": -35.73,
    "notes": {
     "up": [
@@ -437,7 +425,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.69,
+   "turnover": 0.57,
    "rate4": null,
    "notes": {
     "up": [],
@@ -453,19 +441,21 @@
     "n": 0
    },
    "bsky": {
-    "n7": 2,
+    "n7": 3,
     "wk_prev": 0.7,
-    "pos": 2,
-    "neg": 1,
+    "pos": 3,
+    "neg": 2,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 4
+    "n28": 5
    },
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
-    "warn": []
+    "warn": [
+     "SNSで投資の話題が急に増えた（1週間で3件、前の3週は週0.7件）"
+    ]
    }
   },
   "9433": {
