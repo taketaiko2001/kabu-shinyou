@@ -1,8 +1,8 @@
 {
- "updated": "2026-10-30 12:59",
+ "updated": "2026-10-30 15:49",
  "sources": {
   "shorts": "JPX 空売り残高（20261008〜20261029公表の15日分）",
-  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：wikimedia.org: HTTP 429）",
+  "wiki": "取れなかった（wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
@@ -16,13 +16,6 @@
     "total": 0.0,
     "last": "10/22"
    },
-   "wiki": {
-    "title": "西華産業",
-    "avg7": 17,
-    "avg28": 20,
-    "ratio": 0.85,
-    "max7": 24
-   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -32,34 +25,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.06,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "9304": {
-   "name": "澁澤倉庫",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/13"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 0.92,
+   "turnover": 1.03,
    "rate4": null,
    "notes": {
     "up": [],
@@ -86,7 +52,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.33,
+   "turnover": 1.31,
    "rate4": null,
    "notes": {
     "up": [
@@ -94,6 +60,37 @@
     ],
     "down": [],
     "warn": []
+   }
+  },
+  "141A": {
+   "name": "トライアルホールディングス",
+   "shorts": {
+    "n": 3,
+    "up": 1,
+    "down": 2,
+    "sellers": 1,
+    "total": 1.69,
+    "last": "10/27"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.83,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告3件中、減らした2件）"
+    ],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の1.8倍）"
+    ]
    }
   },
   "4480": {
@@ -115,7 +112,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.06,
+   "turnover": 1.02,
    "rate4": -14.1,
    "notes": {
     "up": [
@@ -140,7 +137,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.08,
+   "turnover": 1.06,
    "rate4": null,
    "notes": {
     "up": [],
@@ -162,10 +159,61 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.33,
+   "turnover": 1.21,
    "rate4": null,
    "notes": {
     "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "8392": {
+   "name": "大分銀行",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.45,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "3591": {
+   "name": "ワコールホールディングス",
+   "shorts": {
+    "n": 14,
+    "up": 5,
+    "down": 9,
+    "sellers": 2,
+    "total": 1.95,
+    "last": "10/27"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.92,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告14件中、減らした9件）"
+    ],
     "down": [],
     "warn": []
    }
@@ -189,7 +237,7 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 1.04,
+   "turnover": 1.12,
    "rate4": null,
    "notes": {
     "up": [
@@ -228,28 +276,6 @@
     "warn": []
    }
   },
-  "8818": {
-   "name": "京阪神ビルディング",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.94,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
   "1963": {
    "name": "日揮ホールディングス",
    "shorts": {
@@ -269,36 +295,12 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.15,
+   "turnover": 1.11,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
     "warn": []
-   }
-  },
-  "8392": {
-   "name": "大分銀行",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.52,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": [
-     "売買代金が増えている（直近5日は20日平均の1.5倍）"
-    ]
    }
   },
   "1952": {
@@ -315,7 +317,29 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.37,
+   "turnover": 1.27,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "8818": {
+   "name": "京阪神ビルディング",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.03,
    "rate4": null,
    "notes": {
     "up": [],
@@ -342,7 +366,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.95,
+   "turnover": 0.89,
    "rate4": null,
    "notes": {
     "up": [],
@@ -366,7 +390,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 1.39,
+   "turnover": 1.49,
    "rate4": null,
    "notes": {
     "up": [],
@@ -393,7 +417,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 0.33,
+   "turnover": 0.27,
    "rate4": null,
    "notes": {
     "up": [
@@ -422,7 +446,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.99,
+   "turnover": 0.92,
    "rate4": null,
    "notes": {
     "up": [],
