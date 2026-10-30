@@ -1,8 +1,8 @@
 {
- "updated": "2026-10-30 08:31",
+ "updated": "2026-10-30 12:59",
  "sources": {
   "shorts": "JPX 空売り残高（20261008〜20261029公表の15日分）",
-  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
+  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
@@ -18,10 +18,10 @@
    },
    "wiki": {
     "title": "西華産業",
-    "avg7": 18,
+    "avg7": 17,
     "avg28": 20,
-    "ratio": 0.89,
-    "max7": 28
+    "ratio": 0.85,
+    "max7": 24
    },
    "bsky": {
     "n7": 0,
@@ -40,6 +40,33 @@
     "warn": []
    }
   },
+  "9304": {
+   "name": "澁澤倉庫",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.82,
+    "last": "10/13"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.3,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 0.92,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
   "9045": {
    "name": "京阪ホールディングス",
    "shorts": {
@@ -49,13 +76,6 @@
     "sellers": 1,
     "total": 0.91,
     "last": "10/14"
-   },
-   "wiki": {
-    "title": "京阪ホールディングス",
-    "avg7": 69,
-    "avg28": 56,
-    "ratio": 1.23,
-    "max7": 150
    },
    "bsky": {
     "n7": 0,
@@ -128,33 +148,6 @@
     "warn": []
    }
   },
-  "9304": {
-   "name": "澁澤倉庫",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/13"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 0.92,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
   "8399": {
    "name": "琉球銀行",
    "shorts": {
@@ -188,6 +181,35 @@
     "last": "10/27"
    },
    "bsky": {
+    "n7": 1,
+    "wk_prev": 0.3,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 2
+   },
+   "turnover": 1.04,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告8件中、減らした5件）"
+    ],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6309": {
+   "name": "巴工業",
+   "shorts": {
+    "n": 9,
+    "up": 6,
+    "down": 3,
+    "sellers": 4,
+    "total": 2.21,
+    "last": "10/28"
+   },
+   "bsky": {
     "n7": 0,
     "wk_prev": 0.3,
     "pos": 0,
@@ -196,12 +218,34 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 1.04,
+   "turnover": 1.34,
    "rate4": null,
    "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告8件中、減らした5件）"
+    "up": [],
+    "down": [
+     "機関の空売りが増えている（報告9件中、増やした6件・合計2.21%）"
     ],
+    "warn": []
+   }
+  },
+  "8818": {
+   "name": "京阪神ビルディング",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.94,
+   "rate4": null,
+   "notes": {
+    "up": [],
     "down": [],
     "warn": []
    }
@@ -257,35 +301,6 @@
     ]
    }
   },
-  "6309": {
-   "name": "巴工業",
-   "shorts": {
-    "n": 9,
-    "up": 6,
-    "down": 3,
-    "sellers": 4,
-    "total": 2.21,
-    "last": "10/28"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.34,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [
-     "機関の空売りが増えている（報告9件中、増やした6件・合計2.21%）"
-    ],
-    "warn": []
-   }
-  },
   "1952": {
    "name": "新日本空調",
    "shorts": {
@@ -301,50 +316,6 @@
     "n28": 0
    },
    "turnover": 1.37,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8818": {
-   "name": "京阪神ビルディング",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.94,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8714": {
-   "name": "池田泉州ホールディングス",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.39,
    "rate4": null,
    "notes": {
     "up": [],
@@ -378,6 +349,28 @@
     "down": [
      "機関の空売りが増えている（報告10件中、増やした6件・合計1.32%）"
     ],
+    "warn": []
+   }
+  },
+  "8714": {
+   "name": "池田泉州ホールディングス",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.39,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
     "warn": []
    }
   },
