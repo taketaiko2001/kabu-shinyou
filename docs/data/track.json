@@ -481,7 +481,7 @@
 "status": "open",
 "fill_date": "2026-10-27",
 "fill": 2375.0,
-"pnl": -0.04,
+"pnl": 0.46,
 "note": "保有中"
 },
 {
@@ -515,7 +515,7 @@
 "status": "open",
 "fill_date": "2026-10-28",
 "fill": 2290.0,
-"pnl": -2.66,
+"pnl": -2.62,
 "note": "保有中"
 },
 {
@@ -622,7 +622,7 @@
 "status": "open",
 "fill_date": "2026-10-29",
 "fill": 2006.0,
-"pnl": 0.5,
+"pnl": 0.25,
 "note": "保有中"
 },
 {
@@ -639,7 +639,7 @@
 "status": "open",
 "fill_date": "2026-10-29",
 "fill": 3255.0,
-"pnl": 2.53,
+"pnl": 2.67,
 "note": "利確1済み"
 },
 {
@@ -656,7 +656,7 @@
 "status": "open",
 "fill_date": "2026-10-30",
 "fill": 1290.0,
-"pnl": -0.23,
+"pnl": -0.12,
 "note": "保有中"
 },
 {
@@ -739,6 +739,45 @@
 "stop": 2530,
 "tp1": 2945,
 "tp2": 3150,
+"status": "waiting"
+},
+{
+"id": "20261102_8117",
+"code": "8117",
+"name": "中央自動車工業",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-02",
+"entry": 2056,
+"stop": 1968,
+"tp1": 2144,
+"tp2": 2232,
+"status": "waiting"
+},
+{
+"id": "20261102_4208",
+"code": "4208",
+"name": "ＵＢＥ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-02",
+"entry": 3190,
+"stop": 3090,
+"tp1": 3285,
+"tp2": 3385,
+"status": "waiting"
+},
+{
+"id": "20261102_3040",
+"code": "3040",
+"name": "ソリトンシステムズ",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-02",
+"entry": 2843,
+"stop": 2564,
+"tp1": 3125,
+"tp2": 3405,
 "status": "waiting"
 }
 ]
