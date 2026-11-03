@@ -816,5 +816,70 @@
 "tp1": 1121,
 "tp2": 1206,
 "status": "waiting"
+},
+{
+"id": "20261104_1518",
+"code": "1518",
+"name": "三井松島ホールディングス",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-04",
+"entry": 2204,
+"stop": 2142,
+"tp1": 2267,
+"tp2": 2328,
+"status": "waiting"
+},
+{
+"id": "20261104_2384",
+"code": "2384",
+"name": "ＳＢＳホールディングス",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-04",
+"entry": 5630,
+"stop": 5360,
+"tp1": 5900,
+"tp2": 5980,
+"status": "waiting"
+},
+{
+"id": "20261104_4118",
+"code": "4118",
+"name": "カネカ",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-04",
+"entry": 6140,
+"stop": 5985,
+"tp1": 6300,
+"tp2": 6455,
+"status": "waiting"
+},
+{
+"id": "20261104_7516",
+"code": "7516",
+"name": "コーナン商事",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-04",
+"entry": 4575,
+"stop": 4430,
+"tp1": 4725,
+"tp2": 4835,
+"status": "waiting"
+},
+{
+"id": "20261104_6859",
+"code": "6859",
+"name": "エスペック",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-04",
+"entry": 4115,
+"stop": 3850,
+"tp1": 4380,
+"tp2": 4645,
+"status": "waiting"
 }
 ]

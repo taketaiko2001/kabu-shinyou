@@ -1,27 +1,134 @@
 {
- "updated": "2026-11-02 16:04",
+ "updated": "2026-11-04 08:33",
  "sources": {
-  "shorts": "JPX 空売り残高（20261009〜20261030公表の15日分）",
+  "shorts": "JPX 空売り残高（20261102〜20261102公表の1日分）",
   "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
+  "1518": {
+   "name": "三井松島ホールディングス",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.82,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.82,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "2384": {
+   "name": "ＳＢＳホールディングス",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.72,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.2,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "4118": {
+   "name": "カネカ",
+   "shorts": {
+    "n": 0
+   },
+   "wiki": {
+    "title": "カネカ",
+    "avg7": 205,
+    "avg28": 106,
+    "ratio": 1.93,
+    "max7": 328
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.34,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "8117": {
+   "name": "中央自動車工業",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.66,
+    "last": "10/29"
+   },
+   "wiki": {
+    "title": "中央自動車工業",
+    "avg7": 12,
+    "avg28": 33,
+    "ratio": 0.37,
+    "max7": 20
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.91,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の1.9倍）"
+    ]
+   }
+  },
   "8061": {
    "name": "西華産業",
    "shorts": {
-    "n": 4,
-    "up": 2,
-    "down": 2,
-    "sellers": 0,
-    "total": 0.0,
-    "last": "10/22"
-   },
-   "wiki": {
-    "title": "西華産業",
-    "avg7": 20,
-    "avg28": 20,
-    "ratio": 1.0,
-    "max7": 27
+    "n": 0
    },
    "bsky": {
     "n7": 0,
@@ -40,22 +147,32 @@
     "warn": []
    }
   },
+  "7516": {
+   "name": "コーナン商事",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.7,
+    "pos": 2,
+    "neg": 1,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 2
+   },
+   "turnover": 1.12,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
   "9045": {
    "name": "京阪ホールディングス",
    "shorts": {
-    "n": 3,
-    "up": 1,
-    "down": 2,
-    "sellers": 1,
-    "total": 0.91,
-    "last": "10/14"
-   },
-   "wiki": {
-    "title": "京阪ホールディングス",
-    "avg7": 57,
-    "avg28": 59,
-    "ratio": 0.96,
-    "max7": 76
+    "n": 0
    },
    "bsky": {
     "n7": 0,
@@ -69,38 +186,34 @@
    "turnover": 1.32,
    "rate4": null,
    "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告3件中、減らした2件）"
-    ],
+    "up": [],
     "down": [],
     "warn": []
    }
   },
-  "4208": {
-   "name": "ＵＢＥ",
+  "3916": {
+   "name": "デジタル・インフォメーション・テクノロジー",
    "shorts": {
-    "n": 10,
-    "up": 3,
-    "down": 7,
-    "sellers": 2,
-    "total": 2.02,
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 1,
+    "total": 0.66,
     "last": "10/29"
    },
    "bsky": {
-    "n7": 1,
+    "n7": 0,
     "wk_prev": 0.0,
-    "pos": 1,
-    "neg": 1,
+    "pos": 0,
+    "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 1
+    "n28": 0
    },
-   "turnover": 0.88,
+   "turnover": 0.96,
    "rate4": null,
    "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告10件中、減らした7件）"
-    ],
+    "up": [],
     "down": [],
     "warn": []
    }
@@ -111,33 +224,6 @@
     "n": 0
    },
    "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.4,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "9506": {
-   "name": "東北電力",
-   "shorts": {
-    "n": 8,
-    "up": 4,
-    "down": 4,
-    "sellers": 1,
-    "total": 1.4,
-    "last": "10/28"
-   },
-   "bsky": {
     "n7": 1,
     "wk_prev": 0.3,
     "pos": 0,
@@ -146,129 +232,7 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 1.3,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "1835": {
-   "name": "東鉄工業",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.12,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "3591": {
-   "name": "ワコールホールディングス",
-   "shorts": {
-    "n": 12,
-    "up": 5,
-    "down": 7,
-    "sellers": 2,
-    "total": 1.95,
-    "last": "10/27"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.93,
-   "rate4": null,
-   "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告12件中、減らした7件）"
-    ],
-    "down": [],
-    "warn": []
-   }
-  },
-  "1963": {
-   "name": "日揮ホールディングス",
-   "shorts": {
-    "n": 2,
-    "up": 1,
-    "down": 1,
-    "sellers": 0,
-    "total": 0.0,
-    "last": "10/19"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.98,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8399": {
-   "name": "琉球銀行",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.28,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8818": {
-   "name": "京阪神ビルディング",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.18,
+   "turnover": 1.4,
    "rate4": null,
    "notes": {
     "up": [],
@@ -298,31 +262,46 @@
     "warn": []
    }
   },
-  "3697": {
-   "name": "ＳＨＩＦＴ",
+  "8399": {
+   "name": "琉球銀行",
    "shorts": {
-    "n": 57,
-    "up": 24,
-    "down": 33,
-    "sellers": 4,
-    "total": 9.22,
-    "last": "10/29"
+    "n": 0
    },
    "bsky": {
-    "n7": 1,
-    "wk_prev": 1.3,
-    "pos": 1,
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 5
+    "n28": 0
    },
-   "turnover": 0.69,
+   "turnover": 1.28,
    "rate4": null,
    "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告57件中、減らした33件）"
-    ],
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6859": {
+   "name": "エスペック",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.88,
+   "rate4": null,
+   "notes": {
+    "up": [],
     "down": [],
     "warn": []
    }
@@ -330,12 +309,7 @@
   "4434": {
    "name": "サーバーワークス",
    "shorts": {
-    "n": 11,
-    "up": 6,
-    "down": 5,
-    "sellers": 1,
-    "total": 0.9,
-    "last": "10/29"
+    "n": 0
    },
    "bsky": {
     "n7": 0,
@@ -354,73 +328,15 @@
     "warn": []
    }
   },
-  "3747": {
-   "name": "インタートレード",
-   "shorts": {
-    "n": 47,
-    "up": 25,
-    "down": 22,
-    "sellers": 5,
-    "total": 10.52,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 2,
-    "wk_prev": 0.0,
-    "pos": 2,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 2
-   },
-   "turnover": 0.88,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [
-     "機関の空売りが増えている（報告47件中、増やした25件・合計10.52%）"
-    ],
-    "warn": []
-   }
-  },
-  "4395": {
-   "name": "アクリート",
-   "shorts": {
-    "n": 48,
-    "up": 30,
-    "down": 17,
-    "sellers": 6,
-    "total": 6.62,
-    "last": "10/28"
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 1.0,
-    "pos": 2,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 4
-   },
-   "turnover": 1.18,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [
-     "機関の空売りが増えている（報告48件中、増やした30件・合計6.62%）"
-    ],
-    "warn": []
-   }
-  },
   "5992": {
    "name": "中央発條",
    "shorts": {
-    "n": 4,
-    "up": 1,
-    "down": 3,
-    "sellers": 1,
-    "total": 0.88,
-    "last": "10/22"
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 0,
+    "total": 0.0,
+    "last": "10/29"
    },
    "bsky": {
     "n7": 2,
@@ -434,42 +350,11 @@
    "turnover": 2.52,
    "rate4": null,
    "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告4件中、減らした3件）"
-    ],
+    "up": [],
     "down": [],
     "warn": [
      "売買代金が増えている（直近5日は20日平均の2.5倍）"
     ]
-   }
-  },
-  "6740": {
-   "name": "ジャパンディスプレイ",
-   "shorts": {
-    "n": 9,
-    "up": 6,
-    "down": 3,
-    "sellers": 2,
-    "total": 2.32,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.69,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [
-     "機関の空売りが増えている（報告9件中、増やした6件・合計2.32%）"
-    ],
-    "warn": []
    }
   },
   "7203": {
@@ -478,23 +363,19 @@
     "n": 0
    },
    "bsky": {
-    "n7": 5,
+    "n7": 2,
     "wk_prev": 0.7,
     "pos": 2,
     "neg": 1,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 7
+    "n28": 4
    },
    "rate4": null,
    "notes": {
-    "up": [
-     "SNSの話題は良い話が多い（良い2・悪い1）"
-    ],
+    "up": [],
     "down": [],
-    "warn": [
-     "SNSで投資の話題が急に増えた（1週間で5件、前の3週は週0.7件）"
-    ]
+    "warn": []
    }
   },
   "9433": {
@@ -503,8 +384,8 @@
     "n": 0
    },
    "bsky": {
-    "n7": 1,
-    "wk_prev": 0.0,
+    "n7": 0,
+    "wk_prev": 0.3,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
