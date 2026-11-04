@@ -1,8 +1,8 @@
 {
- "updated": "2026-11-04 12:52",
+ "updated": "2026-11-04 15:50",
  "sources": {
   "shorts": "JPX 空売り残高（20261102〜20261102公表の1日分）",
-  "wiki": "取れなかった（ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
+  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
@@ -16,6 +16,13 @@
     "total": 0.72,
     "last": "10/29"
    },
+   "wiki": {
+    "title": "SBSホールディングス",
+    "avg7": 351,
+    "avg28": 105,
+    "ratio": 3.36,
+    "max7": 1470
+   },
    "bsky": {
     "n7": 1,
     "wk_prev": 0.0,
@@ -25,7 +32,43 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 1.2,
+   "turnover": 1.19,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "世間の関心が急に高まっている（Wikipediaの閲覧が先月の3.4倍）"
+    ]
+   }
+  },
+  "1518": {
+   "name": "三井松島ホールディングス",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.82,
+    "last": "10/29"
+   },
+   "wiki": {
+    "title": "三井松島ホールディングス",
+    "avg7": 27,
+    "avg28": 27,
+    "ratio": 0.98,
+    "max7": 31
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.91,
    "rate4": null,
    "notes": {
     "up": [],
@@ -38,6 +81,13 @@
    "shorts": {
     "n": 0
    },
+   "wiki": {
+    "title": "カネカ",
+    "avg7": 207,
+    "avg28": 107,
+    "ratio": 1.92,
+    "max7": 328
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -47,7 +97,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.34,
+   "turnover": 1.44,
    "rate4": null,
    "notes": {
     "up": [],
@@ -60,6 +110,13 @@
    "shorts": {
     "n": 0
    },
+   "wiki": {
+    "title": "京阪ホールディングス",
+    "avg7": 55,
+    "avg28": 60,
+    "ratio": 0.93,
+    "max7": 79
+   },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
@@ -69,7 +126,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.32,
+   "turnover": 1.25,
    "rate4": null,
    "notes": {
     "up": [],
@@ -91,68 +148,12 @@
     "r_dn": 0,
     "n28": 2
    },
-   "turnover": 1.12,
+   "turnover": 1.14,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
     "warn": []
-   }
-  },
-  "1518": {
-   "name": "三井松島ホールディングス",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.82,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8117": {
-   "name": "中央自動車工業",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.66,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.91,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": [
-     "売買代金が増えている（直近5日は20日平均の1.9倍）"
-    ]
    }
   },
   "8061": {
@@ -169,7 +170,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.17,
+   "turnover": 1.19,
    "rate4": null,
    "notes": {
     "up": [],
@@ -196,7 +197,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.96,
+   "turnover": 0.85,
    "rate4": null,
    "notes": {
     "up": [],
@@ -218,7 +219,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.29,
+   "turnover": 1.36,
    "rate4": null,
    "notes": {
     "up": [],
@@ -240,7 +241,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.28,
+   "turnover": 1.14,
    "rate4": null,
    "notes": {
     "up": [],
@@ -262,7 +263,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.88,
+   "turnover": 0.89,
    "rate4": null,
    "notes": {
     "up": [],
@@ -284,7 +285,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.77,
+   "turnover": 0.73,
    "rate4": null,
    "notes": {
     "up": [],
@@ -303,15 +304,15 @@
     "last": "10/29"
    },
    "bsky": {
-    "n7": 2,
-    "wk_prev": 0.3,
+    "n7": 1,
+    "wk_prev": 0.7,
     "pos": 1,
     "neg": 1,
     "r_up": 0,
     "r_dn": 0,
     "n28": 3
    },
-   "turnover": 2.52,
+   "turnover": 2.54,
    "rate4": null,
    "notes": {
     "up": [],
@@ -327,13 +328,13 @@
     "n": 0
    },
    "bsky": {
-    "n7": 2,
+    "n7": 1,
     "wk_prev": 0.7,
     "pos": 2,
-    "neg": 1,
+    "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 4
+    "n28": 3
    },
    "rate4": null,
    "notes": {
