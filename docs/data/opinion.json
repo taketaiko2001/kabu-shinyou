@@ -1,27 +1,20 @@
 {
- "updated": "2026-11-04 15:50",
+ "updated": "2026-11-05 08:33",
  "sources": {
-  "shorts": "JPX 空売り残高（20261102〜20261102公表の1日分）",
-  "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
+  "shorts": "JPX 空売り残高（20261102〜20261104公表の2日分）",
+  "wiki": "取れなかった（ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
   "2384": {
    "name": "ＳＢＳホールディングス",
    "shorts": {
-    "n": 1,
-    "up": 1,
+    "n": 2,
+    "up": 2,
     "down": 0,
-    "sellers": 1,
-    "total": 0.72,
-    "last": "10/29"
-   },
-   "wiki": {
-    "title": "SBSホールディングス",
-    "avg7": 351,
-    "avg28": 105,
-    "ratio": 3.36,
-    "max7": 1470
+    "sellers": 2,
+    "total": 1.22,
+    "last": "10/30"
    },
    "bsky": {
     "n7": 1,
@@ -32,123 +25,7 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 1.19,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": [
-     "世間の関心が急に高まっている（Wikipediaの閲覧が先月の3.4倍）"
-    ]
-   }
-  },
-  "1518": {
-   "name": "三井松島ホールディングス",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/29"
-   },
-   "wiki": {
-    "title": "三井松島ホールディングス",
-    "avg7": 27,
-    "avg28": 27,
-    "ratio": 0.98,
-    "max7": 31
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.91,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4118": {
-   "name": "カネカ",
-   "shorts": {
-    "n": 0
-   },
-   "wiki": {
-    "title": "カネカ",
-    "avg7": 207,
-    "avg28": 107,
-    "ratio": 1.92,
-    "max7": 328
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.44,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "9045": {
-   "name": "京阪ホールディングス",
-   "shorts": {
-    "n": 0
-   },
-   "wiki": {
-    "title": "京阪ホールディングス",
-    "avg7": 55,
-    "avg28": 60,
-    "ratio": 0.93,
-    "max7": 79
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.25,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "7516": {
-   "name": "コーナン商事",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.7,
-    "pos": 2,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 2
-   },
-   "turnover": 1.14,
+   "turnover": 1.23,
    "rate4": null,
    "notes": {
     "up": [],
@@ -162,6 +39,28 @@
     "n": 0
    },
    "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.21,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "9045": {
+   "name": "京阪ホールディングス",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
     "n7": 0,
     "wk_prev": 0.0,
     "pos": 0,
@@ -170,7 +69,169 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.19,
+   "turnover": 1.29,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "5480": {
+   "name": "日本冶金工業",
+   "shorts": {
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 1,
+    "total": 1.02,
+    "last": "11/02"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 1,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.99,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の2.0倍）"
+    ]
+   }
+  },
+  "1518": {
+   "name": "三井松島ホールディングス",
+   "shorts": {
+    "n": 1,
+    "up": 1,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.82,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.95,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "8117": {
+   "name": "中央自動車工業",
+   "shorts": {
+    "n": 4,
+    "up": 3,
+    "down": 1,
+    "sellers": 2,
+    "total": 1.41,
+    "last": "11/02"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.87,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [
+     "機関の空売りが増えている（報告4件中、増やした3件・合計1.41%）"
+    ],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の1.9倍）"
+    ]
+   }
+  },
+  "1871": {
+   "name": "ピーエス・コンストラクション",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 2.21,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の2.2倍）"
+    ]
+   }
+  },
+  "7480": {
+   "name": "スズデン",
+   "shorts": {
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 0,
+    "total": 0.0,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 1,
+    "neg": 1,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.98,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の2.0倍）"
+    ]
+   }
+  },
+  "6859": {
+   "name": "エスペック",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.9,
    "rate4": null,
    "notes": {
     "up": [],
@@ -205,21 +266,21 @@
     "warn": []
    }
   },
-  "1952": {
-   "name": "新日本空調",
+  "8714": {
+   "name": "池田泉州ホールディングス",
    "shorts": {
     "n": 0
    },
    "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
+    "n7": 1,
+    "wk_prev": 0.3,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 0
+    "n28": 2
    },
-   "turnover": 1.36,
+   "turnover": 1.46,
    "rate4": null,
    "notes": {
     "up": [],
@@ -227,21 +288,26 @@
     "warn": []
    }
   },
-  "8399": {
-   "name": "琉球銀行",
+  "4440": {
+   "name": "ヴィッツ",
    "shorts": {
-    "n": 0
+    "n": 2,
+    "up": 1,
+    "down": 1,
+    "sellers": 1,
+    "total": 1.49,
+    "last": "11/02"
    },
    "bsky": {
     "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
+    "wk_prev": 2.0,
+    "pos": 1,
+    "neg": 1,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 0
+    "n28": 6
    },
-   "turnover": 1.14,
+   "turnover": 0.53,
    "rate4": null,
    "notes": {
     "up": [],
@@ -249,8 +315,8 @@
     "warn": []
    }
   },
-  "6859": {
-   "name": "エスペック",
+  "7744": {
+   "name": "ノーリツ鋼機",
    "shorts": {
     "n": 0
    },
@@ -263,29 +329,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.89,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4434": {
-   "name": "サーバーワークス",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.73,
+   "turnover": 1.13,
    "rate4": null,
    "notes": {
     "up": [],
@@ -304,15 +348,15 @@
     "last": "10/29"
    },
    "bsky": {
-    "n7": 1,
-    "wk_prev": 0.7,
+    "n7": 0,
+    "wk_prev": 1.0,
     "pos": 1,
     "neg": 1,
     "r_up": 0,
     "r_dn": 0,
     "n28": 3
    },
-   "turnover": 2.54,
+   "turnover": 2.55,
    "rate4": null,
    "notes": {
     "up": [],
@@ -328,13 +372,13 @@
     "n": 0
    },
    "bsky": {
-    "n7": 1,
+    "n7": 2,
     "wk_prev": 0.7,
-    "pos": 2,
+    "pos": 3,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 3
+    "n28": 4
    },
    "rate4": null,
    "notes": {
@@ -349,19 +393,21 @@
     "n": 0
    },
    "bsky": {
-    "n7": 1,
+    "n7": 3,
     "wk_prev": 0.3,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 2
+    "n28": 4
    },
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
-    "warn": []
+    "warn": [
+     "SNSで投資の話題が急に増えた（1週間で3件、前の3週は週0.3件）"
+    ]
    }
   }
  },

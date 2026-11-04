@@ -772,7 +772,7 @@
 "status": "open",
 "fill_date": "2026-11-02",
 "fill": 2737.0,
-"pnl": 1.1,
+"pnl": 0.26,
 "note": "保有中"
 },
 {
@@ -789,7 +789,7 @@
 "status": "open",
 "fill_date": "2026-11-04",
 "fill": 2048.0,
-"pnl": -2.69,
+"pnl": -2.54,
 "note": "保有中"
 },
 {
@@ -928,6 +928,58 @@
 "stop": 2592,
 "tp1": 2903,
 "tp2": 3060,
+"status": "waiting"
+},
+{
+"id": "20261105_5480",
+"code": "5480",
+"name": "日本冶金工業",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-05",
+"entry": 5265,
+"stop": 5045,
+"tp1": 5480,
+"tp2": 5700,
+"status": "waiting"
+},
+{
+"id": "20261105_7480",
+"code": "7480",
+"name": "スズデン",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-05",
+"entry": 3685,
+"stop": 3440,
+"tp1": 3930,
+"tp2": 4175,
+"status": "waiting"
+},
+{
+"id": "20261105_3916",
+"code": "3916",
+"name": "デジタル・インフォメーション・テクノロジー",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-05",
+"entry": 972,
+"stop": 916,
+"tp1": 1027,
+"tp2": 1083,
+"status": "waiting"
+},
+{
+"id": "20261105_8714",
+"code": "8714",
+"name": "池田泉州ホールディングス",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-05",
+"entry": 839,
+"stop": 777,
+"tp1": 900,
+"tp2": 962,
 "status": "waiting"
 }
 ]
