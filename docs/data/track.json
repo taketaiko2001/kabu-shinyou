@@ -792,7 +792,7 @@
 "status": "open",
 "fill_date": "2026-11-04",
 "fill": 2048.0,
-"pnl": -0.63,
+"pnl": -0.73,
 "note": "保有中"
 },
 {
@@ -826,7 +826,7 @@
 "status": "open",
 "fill_date": "2026-11-04",
 "fill": 2843.0,
-"pnl": -3.97,
+"pnl": -3.76,
 "note": "保有中"
 },
 {
@@ -856,7 +856,7 @@
 "status": "open",
 "fill_date": "2026-11-05",
 "fill": 2204.0,
-"pnl": 0.27,
+"pnl": 0.41,
 "note": "保有中"
 },
 {
@@ -943,7 +943,7 @@
 "status": "open",
 "fill_date": "2026-11-05",
 "fill": 2747.0,
-"pnl": -0.95,
+"pnl": 0.04,
 "note": "保有中"
 },
 {
@@ -1009,6 +1009,71 @@
 "stop": 1980,
 "tp1": 2136,
 "tp2": 2194,
+"status": "waiting"
+},
+{
+"id": "20261106_2678",
+"code": "2678",
+"name": "アスクル",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-06",
+"entry": 1225,
+"stop": 1184,
+"tp1": 1267,
+"tp2": 1308,
+"status": "waiting"
+},
+{
+"id": "20261106_4189",
+"code": "4189",
+"name": "ＫＨネオケム",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-06",
+"entry": 3355,
+"stop": 3175,
+"tp1": 3540,
+"tp2": 3720,
+"status": "waiting"
+},
+{
+"id": "20261106_4431",
+"code": "4431",
+"name": "スマレジ",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-06",
+"entry": 3595,
+"stop": 3345,
+"tp1": 3850,
+"tp2": 4095,
+"status": "waiting"
+},
+{
+"id": "20261106_456A",
+"code": "456A",
+"name": "ＨＵＭＡＮ ＭＡＤＥ",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-06",
+"entry": 1789,
+"stop": 1597,
+"tp1": 1981,
+"tp2": 2173,
+"status": "waiting"
+},
+{
+"id": "20261106_277A",
+"code": "277A",
+"name": "グロービング",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-06",
+"entry": 1975,
+"stop": 1804,
+"tp1": 2146,
+"tp2": 2195,
 "status": "waiting"
 }
 ]
