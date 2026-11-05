@@ -1,111 +1,11 @@
 {
- "updated": "2026-11-05 08:33",
+ "updated": "2026-11-05 12:50",
  "sources": {
   "shorts": "JPX 空売り残高（20261102〜20261104公表の2日分）",
   "wiki": "取れなかった（ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
-  "2384": {
-   "name": "ＳＢＳホールディングス",
-   "shorts": {
-    "n": 2,
-    "up": 2,
-    "down": 0,
-    "sellers": 2,
-    "total": 1.22,
-    "last": "10/30"
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.23,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8061": {
-   "name": "西華産業",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.21,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "9045": {
-   "name": "京阪ホールディングス",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.29,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "5480": {
-   "name": "日本冶金工業",
-   "shorts": {
-    "n": 1,
-    "up": 0,
-    "down": 1,
-    "sellers": 1,
-    "total": 1.02,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.0,
-    "pos": 1,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.99,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": [
-     "売買代金が増えている（直近5日は20日平均の2.0倍）"
-    ]
-   }
-  },
   "1518": {
    "name": "三井松島ホールディングス",
    "shorts": {
@@ -126,6 +26,33 @@
     "n28": 0
    },
    "turnover": 0.95,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "2384": {
+   "name": "ＳＢＳホールディングス",
+   "shorts": {
+    "n": 2,
+    "up": 2,
+    "down": 0,
+    "sellers": 2,
+    "total": 1.22,
+    "last": "10/30"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.23,
    "rate4": null,
    "notes": {
     "up": [],
@@ -164,8 +91,59 @@
     ]
    }
   },
-  "1871": {
-   "name": "ピーエス・コンストラクション",
+  "5480": {
+   "name": "日本冶金工業",
+   "shorts": {
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 1,
+    "total": 1.02,
+    "last": "11/02"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 1,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.99,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の2.0倍）"
+    ]
+   }
+  },
+  "8061": {
+   "name": "西華産業",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.21,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "7744": {
+   "name": "ノーリツ鋼機",
    "shorts": {
     "n": 0
    },
@@ -178,14 +156,12 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 2.21,
+   "turnover": 1.13,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
-    "warn": [
-     "売買代金が増えている（直近5日は20日平均の2.2倍）"
-    ]
+    "warn": []
    }
   },
   "7480": {
@@ -217,28 +193,6 @@
     ]
    }
   },
-  "6859": {
-   "name": "エスペック",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 0.9,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
   "3916": {
    "name": "デジタル・インフォメーション・テクノロジー",
    "shorts": {
@@ -259,6 +213,28 @@
     "n28": 0
    },
    "turnover": 0.85,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6859": {
+   "name": "エスペック",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.9,
    "rate4": null,
    "notes": {
     "up": [],
@@ -315,28 +291,6 @@
     "warn": []
    }
   },
-  "7744": {
-   "name": "ノーリツ鋼機",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.13,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
   "5992": {
    "name": "中央発條",
    "shorts": {
@@ -372,19 +326,23 @@
     "n": 0
    },
    "bsky": {
-    "n7": 2,
+    "n7": 6,
     "wk_prev": 0.7,
-    "pos": 3,
+    "pos": 5,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 4
+    "n28": 8
    },
    "rate4": null,
    "notes": {
-    "up": [],
+    "up": [
+     "SNSの話題は良い話が多い（良い5・悪い0）"
+    ],
     "down": [],
-    "warn": []
+    "warn": [
+     "SNSで投資の話題が急に増えた（1週間で6件、前の3週は週0.7件）"
+    ]
    }
   },
   "9433": {
