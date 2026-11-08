@@ -1,80 +1,22 @@
 {
- "updated": "2026-11-06 15:50",
+ "updated": "2026-11-09 08:37",
  "sources": {
-  "shorts": "JPX 空売り残高（20261102〜20261105公表の3日分）",
+  "shorts": "JPX 空売り残高（20261102〜20261106公表の4日分）",
   "wiki": "Wikipedia 閲覧数（直近7日と、その前の4週の1日平均）（途中から取れなかった：ja.wikipedia.org: HTTP 429・wikimedia.org: HTTP 429）",
   "bsky": "Bluesky（ログインあり・直近4週の投資の話題）"
  },
  "stocks": {
-  "2612": {
-   "name": "かどや製油",
-   "shorts": {
-    "n": 0
-   },
-   "wiki": {
-    "title": "かどや製油",
-    "avg7": 26,
-    "avg28": 37,
-    "ratio": 0.72,
-    "max7": 36
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.7,
-    "pos": 2,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 3
-   },
-   "turnover": 0.5,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "2384": {
-   "name": "ＳＢＳホールディングス",
-   "shorts": {
-    "n": 2,
-    "up": 2,
-    "down": 0,
-    "sellers": 2,
-    "total": 1.22,
-    "last": "10/30"
-   },
-   "wiki": {
-    "title": "SBSホールディングス",
-    "avg7": 323,
-    "avg28": 103,
-    "ratio": 3.14,
-    "max7": 1470
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.15,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": [
-     "世間の関心が急に高まっている（Wikipediaの閲覧が先月の3.1倍）"
-    ]
-   }
-  },
   "2337": {
    "name": "いちご",
    "shorts": {
     "n": 0
+   },
+   "wiki": {
+    "title": "いちご (不動産業)",
+    "avg7": 66,
+    "avg28": 61,
+    "ratio": 1.08,
+    "max7": 90
    },
    "bsky": {
     "n7": 0,
@@ -85,7 +27,7 @@
     "r_dn": 0,
     "n28": 3
    },
-   "turnover": 1.04,
+   "turnover": 1.06,
    "rate4": null,
    "notes": {
     "up": [],
@@ -93,15 +35,109 @@
     "warn": []
    }
   },
-  "5480": {
-   "name": "日本冶金工業",
+  "7630": {
+   "name": "壱番屋",
    "shorts": {
-    "n": 2,
+    "n": 4,
+    "up": 1,
+    "down": 3,
+    "sellers": 1,
+    "total": 1.09,
+    "last": "11/04"
+   },
+   "wiki": {
+    "title": "壱番屋",
+    "avg7": 160,
+    "avg28": 177,
+    "ratio": 0.9,
+    "max7": 204
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.93,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告4件中、減らした3件）"
+    ],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6191": {
+   "name": "エアトリ",
+   "shorts": {
+    "n": 10,
+    "up": 2,
+    "down": 8,
+    "sellers": 3,
+    "total": 3.96,
+    "last": "11/04"
+   },
+   "wiki": {
+    "title": "エアトリ",
+    "avg7": 32,
+    "avg28": 31,
+    "ratio": 1.02,
+    "max7": 62
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.93,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告10件中、減らした8件）"
+    ],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6058": {
+   "name": "ベクトル",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.88,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6088": {
+   "name": "シグマクシス・ホールディングス",
+   "shorts": {
+    "n": 1,
     "up": 0,
-    "down": 2,
-    "sellers": 2,
-    "total": 2.41,
-    "last": "11/02"
+    "down": 1,
+    "sellers": 0,
+    "total": 0.0,
+    "last": "10/30"
    },
    "bsky": {
     "n7": 1,
@@ -112,14 +148,101 @@
     "r_dn": 0,
     "n28": 1
    },
-   "turnover": 2.04,
+   "turnover": 0.92,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
+    "warn": []
+   }
+  },
+  "5480": {
+   "name": "日本冶金工業",
+   "shorts": {
+    "n": 5,
+    "up": 1,
+    "down": 4,
+    "sellers": 2,
+    "total": 2.4,
+    "last": "11/04"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 1,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 2.05,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告5件中、減らした4件）"
+    ],
+    "down": [],
     "warn": [
      "売買代金が増えている（直近5日は20日平均の2.0倍）"
     ]
+   }
+  },
+  "2678": {
+   "name": "アスクル",
+   "shorts": {
+    "n": 7,
+    "up": 2,
+    "down": 5,
+    "sellers": 2,
+    "total": 3.96,
+    "last": "11/04"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.3,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.21,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告7件中、減らした5件）"
+    ],
+    "down": [],
+    "warn": []
+   }
+  },
+  "2432": {
+   "name": "ディー・エヌ・エー",
+   "shorts": {
+    "n": 6,
+    "up": 1,
+    "down": 5,
+    "sellers": 3,
+    "total": 5.58,
+    "last": "11/05"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.4,
+   "rate4": null,
+   "notes": {
+    "up": [
+     "機関が空売りを減らしている（報告6件中、減らした5件）"
+    ],
+    "down": [],
+    "warn": []
    }
   },
   "6419": {
@@ -156,12 +279,12 @@
   "141A": {
    "name": "トライアルホールディングス",
    "shorts": {
-    "n": 5,
-    "up": 2,
+    "n": 6,
+    "up": 3,
     "down": 2,
     "sellers": 3,
-    "total": 3.45,
-    "last": "11/02"
+    "total": 3.51,
+    "last": "11/04"
    },
    "bsky": {
     "n7": 0,
@@ -172,281 +295,56 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.37,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "2678": {
-   "name": "アスクル",
-   "shorts": {
-    "n": 6,
-    "up": 2,
-    "down": 4,
-    "sellers": 2,
-    "total": 3.99,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 1.19,
-   "rate4": null,
-   "notes": {
-    "up": [
-     "機関が空売りを減らしている（報告6件中、減らした4件）"
-    ],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4023": {
-   "name": "クレハ",
-   "shorts": {
-    "n": 9,
-    "up": 6,
-    "down": 3,
-    "sellers": 4,
-    "total": 5.76,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.7,
-    "pos": 2,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 2
-   },
-   "turnover": 1.49,
+   "turnover": 1.39,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [
-     "機関の空売りが増えている（報告9件中、増やした6件・合計5.76%）"
+     "機関の空売りが増えている（報告6件中、増やした3件・合計3.51%）"
     ],
     "warn": []
    }
   },
-  "1518": {
-   "name": "三井松島ホールディングス",
+  "7211": {
+   "name": "三菱自動車工業",
    "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.82,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.16,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "1871": {
-   "name": "ピーエス・コンストラクション",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.37,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4189": {
-   "name": "ＫＨネオケム",
-   "shorts": {
-    "n": 2,
-    "up": 1,
-    "down": 1,
-    "sellers": 1,
-    "total": 0.58,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 3,
-    "wk_prev": 0.0,
-    "pos": 2,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 3
-   },
-   "turnover": 1.85,
-   "rate4": null,
-   "notes": {
-    "up": [
-     "SNSの話題は良い話が多い（良い2・悪い1）"
-    ],
-    "down": [],
-    "warn": [
-     "売買代金が増えている（直近5日は20日平均の1.9倍）"
-    ]
-   }
-  },
-  "456A": {
-   "name": "ＨＵＭＡＮ ＭＡＤＥ",
-   "shorts": {
-    "n": 1,
-    "up": 1,
-    "down": 0,
-    "sellers": 1,
-    "total": 0.84,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 0
-   },
-   "turnover": 1.04,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "277A": {
-   "name": "グロービング",
-   "shorts": {
-    "n": 0
+    "n": 7,
+    "up": 4,
+    "down": 3,
+    "sellers": 3,
+    "total": 3.91,
+    "last": "11/04"
    },
    "bsky": {
     "n7": 0,
     "wk_prev": 0.3,
-    "pos": 1,
-    "neg": 1,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 0.82,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4180": {
-   "name": "Ａｐｐｉｅｒ Ｇｒｏｕｐ",
-   "shorts": {
-    "n": 2,
-    "up": 1,
-    "down": 1,
-    "sellers": 2,
-    "total": 1.59,
-    "last": "10/29"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.0,
     "pos": 0,
     "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 0
+    "n28": 1
    },
-   "turnover": 1.01,
+   "turnover": 1.63,
    "rate4": null,
    "notes": {
     "up": [],
-    "down": [],
-    "warn": []
+    "down": [
+     "機関の空売りが増えている（報告7件中、増やした4件・合計3.91%）"
+    ],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の1.6倍）"
+    ]
    }
   },
-  "446A": {
-   "name": "ノースサンド",
+  "8585": {
+   "name": "オリエントコーポレーション",
    "shorts": {
     "n": 1,
     "up": 0,
     "down": 1,
     "sellers": 1,
-    "total": 0.87,
-    "last": "11/02"
-   },
-   "bsky": {
-    "n7": 0,
-    "wk_prev": 0.3,
-    "pos": 1,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 1
-   },
-   "turnover": 0.97,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "8714": {
-   "name": "池田泉州ホールディングス",
-   "shorts": {
-    "n": 0
-   },
-   "bsky": {
-    "n7": 1,
-    "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
-    "r_up": 0,
-    "r_dn": 0,
-    "n28": 2
-   },
-   "turnover": 1.23,
-   "rate4": null,
-   "notes": {
-    "up": [],
-    "down": [],
-    "warn": []
-   }
-  },
-  "4434": {
-   "name": "サーバーワークス",
-   "shorts": {
-    "n": 0
+    "total": 0.69,
+    "last": "10/29"
    },
    "bsky": {
     "n7": 0,
@@ -457,7 +355,7 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 0.54,
+   "turnover": 1.36,
    "rate4": null,
    "notes": {
     "up": [],
@@ -479,11 +377,172 @@
     "r_dn": 0,
     "n28": 0
    },
-   "turnover": 1.03,
+   "turnover": 1.07,
    "rate4": null,
    "notes": {
     "up": [],
     "down": [],
+    "warn": []
+   }
+  },
+  "1518": {
+   "name": "三井松島ホールディングス",
+   "shorts": {
+    "n": 2,
+    "up": 2,
+    "down": 0,
+    "sellers": 1,
+    "total": 0.95,
+    "last": "11/04"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.18,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "456A": {
+   "name": "ＨＵＭＡＮ ＭＡＤＥ",
+   "shorts": {
+    "n": 2,
+    "up": 1,
+    "down": 1,
+    "sellers": 1,
+    "total": 0.71,
+    "last": "11/04"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.05,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "2395": {
+   "name": "新日本科学",
+   "shorts": {
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 1,
+    "total": 0.67,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.34,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "7480": {
+   "name": "スズデン",
+   "shorts": {
+    "n": 1,
+    "up": 0,
+    "down": 1,
+    "sellers": 0,
+    "total": 0.0,
+    "last": "10/29"
+   },
+   "bsky": {
+    "n7": 1,
+    "wk_prev": 0.0,
+    "pos": 1,
+    "neg": 1,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 1
+   },
+   "turnover": 1.93,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": [
+     "売買代金が増えている（直近5日は20日平均の1.9倍）"
+    ]
+   }
+  },
+  "4431": {
+   "name": "スマレジ",
+   "shorts": {
+    "n": 0
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 0.85,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [],
+    "warn": []
+   }
+  },
+  "6834": {
+   "name": "精工技研",
+   "shorts": {
+    "n": 13,
+    "up": 7,
+    "down": 5,
+    "sellers": 5,
+    "total": 6.24,
+    "last": "11/04"
+   },
+   "bsky": {
+    "n7": 0,
+    "wk_prev": 0.0,
+    "pos": 0,
+    "neg": 0,
+    "r_up": 0,
+    "r_dn": 0,
+    "n28": 0
+   },
+   "turnover": 1.04,
+   "rate4": null,
+   "notes": {
+    "up": [],
+    "down": [
+     "機関の空売りが増えている（報告13件中、増やした7件・合計6.24%）"
+    ],
     "warn": []
    }
   },
@@ -493,22 +552,22 @@
     "n": 0
    },
    "bsky": {
-    "n7": 30,
-    "wk_prev": 0.3,
-    "pos": 17,
-    "neg": 6,
+    "n7": 8,
+    "wk_prev": 0.7,
+    "pos": 4,
+    "neg": 0,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 31
+    "n28": 10
    },
    "rate4": null,
    "notes": {
     "up": [
-     "SNSの話題は良い話が多い（良い17・悪い6）"
+     "SNSの話題は良い話が多い（良い4・悪い0）"
     ],
     "down": [],
     "warn": [
-     "SNSで投資の話題が急に増えた（1週間で30件、前の3週は週0.3件）"
+     "SNSで投資の話題が急に増えた（1週間で8件、前の3週は週0.7件）"
     ]
    }
   },
@@ -518,20 +577,22 @@
     "n": 0
    },
    "bsky": {
-    "n7": 5,
+    "n7": 20,
     "wk_prev": 0.3,
-    "pos": 0,
-    "neg": 0,
+    "pos": 4,
+    "neg": 1,
     "r_up": 0,
     "r_dn": 0,
-    "n28": 6
+    "n28": 21
    },
    "rate4": null,
    "notes": {
-    "up": [],
+    "up": [
+     "SNSの話題は良い話が多い（良い4・悪い1）"
+    ],
     "down": [],
     "warn": [
-     "SNSで投資の話題が急に増えた（1週間で5件、前の3週は週0.3件）"
+     "SNSで投資の話題が急に増えた（1週間で20件、前の3週は週0.3件）"
     ]
    }
   }

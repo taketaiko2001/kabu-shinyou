@@ -710,7 +710,7 @@
 "status": "open",
 "fill_date": "2026-10-29",
 "fill": 1408.0,
-"pnl": -5.75,
+"pnl": -5.33,
 "note": "保有中"
 },
 {
@@ -781,7 +781,7 @@
 "status": "open",
 "fill_date": "2026-11-02",
 "fill": 2737.0,
-"pnl": -3.69,
+"pnl": -3.4,
 "note": "保有中"
 },
 {
@@ -883,7 +883,7 @@
 "status": "open",
 "fill_date": "2026-11-06",
 "fill": 5630.0,
-"pnl": -2.49,
+"pnl": -2.84,
 "note": "保有中"
 },
 {
@@ -980,7 +980,7 @@
 "status": "open",
 "fill_date": "2026-11-06",
 "fill": 5190.0,
-"pnl": 1.35,
+"pnl": 1.54,
 "note": "保有中"
 },
 {
@@ -1028,7 +1028,7 @@
 "status": "open",
 "fill_date": "2026-11-06",
 "fill": 788.0,
-"pnl": 0.0,
+"pnl": 0.38,
 "note": "保有中"
 },
 {
@@ -1164,6 +1164,97 @@
 "stop": 401,
 "tp1": 439,
 "tp2": 458,
+"status": "waiting"
+},
+{
+"id": "20261109_7630",
+"code": "7630",
+"name": "壱番屋",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-09",
+"entry": 1025,
+"stop": 987,
+"tp1": 1063,
+"tp2": 1101,
+"status": "waiting"
+},
+{
+"id": "20261109_6191",
+"code": "6191",
+"name": "エアトリ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 1373,
+"stop": 1299,
+"tp1": 1447,
+"tp2": 1520,
+"status": "waiting"
+},
+{
+"id": "20261109_6058",
+"code": "6058",
+"name": "ベクトル",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 2017,
+"stop": 1886,
+"tp1": 2149,
+"tp2": 2217,
+"status": "waiting"
+},
+{
+"id": "20261109_6088",
+"code": "6088",
+"name": "シグマクシス・ホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 586,
+"stop": 560,
+"tp1": 611,
+"tp2": 637,
+"status": "waiting"
+},
+{
+"id": "20261109_2432",
+"code": "2432",
+"name": "ディー・エヌ・エー",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 2570,
+"stop": 2486,
+"tp1": 2655,
+"tp2": 2704,
+"status": "waiting"
+},
+{
+"id": "20261109_2395",
+"code": "2395",
+"name": "新日本科学",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 1338,
+"stop": 1245,
+"tp1": 1431,
+"tp2": 1524,
+"status": "waiting"
+},
+{
+"id": "20261109_7480",
+"code": "7480",
+"name": "スズデン",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-09",
+"entry": 3175,
+"stop": 2888,
+"tp1": 3465,
+"tp2": 3755,
 "status": "waiting"
 }
 ]
