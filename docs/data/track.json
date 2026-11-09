@@ -710,7 +710,7 @@
 "status": "open",
 "fill_date": "2026-10-29",
 "fill": 1408.0,
-"pnl": 2.63,
+"pnl": 2.98,
 "note": "保有中"
 },
 {
@@ -980,7 +980,7 @@
 "status": "open",
 "fill_date": "2026-11-06",
 "fill": 5190.0,
-"pnl": 5.59,
+"pnl": 5.49,
 "note": "利確1済み"
 },
 {
@@ -1063,7 +1063,7 @@
 "status": "open",
 "fill_date": "2026-11-09",
 "fill": 1225.0,
-"pnl": 1.71,
+"pnl": 1.47,
 "note": "保有中"
 },
 {
@@ -1097,7 +1097,7 @@
 "status": "open",
 "fill_date": "2026-11-09",
 "fill": 3465.0,
-"pnl": 1.44,
+"pnl": 1.73,
 "note": "保有中"
 },
 {
@@ -1280,6 +1280,71 @@
 "stop": 3985,
 "tp1": 4330,
 "tp2": 4505,
+"status": "waiting"
+},
+{
+"id": "20261110_5032",
+"code": "5032",
+"name": "ＡＮＹＣＯＬＯＲ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-10",
+"entry": 3155,
+"stop": 2991,
+"tp1": 3320,
+"tp2": 3380,
+"status": "waiting"
+},
+{
+"id": "20261110_6505",
+"code": "6505",
+"name": "東洋電機製造",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-10",
+"entry": 2887,
+"stop": 2743,
+"tp1": 3030,
+"tp2": 3175,
+"status": "waiting"
+},
+{
+"id": "20261110_4776",
+"code": "4776",
+"name": "サイボウズ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-10",
+"entry": 3055,
+"stop": 2885,
+"tp1": 3225,
+"tp2": 3380,
+"status": "waiting"
+},
+{
+"id": "20261110_3661",
+"code": "3661",
+"name": "エムアップホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-10",
+"entry": 899,
+"stop": 861,
+"tp1": 938,
+"tp2": 976,
+"status": "waiting"
+},
+{
+"id": "20261110_2157",
+"code": "2157",
+"name": "コシダカホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-10",
+"entry": 952,
+"stop": 913,
+"tp1": 992,
+"tp2": 1031,
 "status": "waiting"
 }
 ]
