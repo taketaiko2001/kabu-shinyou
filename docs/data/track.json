@@ -1373,5 +1373,57 @@
 "tp1": 2065,
 "tp2": 2160,
 "status": "waiting"
+},
+{
+"id": "20261111_7172",
+"code": "7172",
+"name": "ジャパンインベストメントアドバイザー",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-11",
+"entry": 2117,
+"stop": 2039,
+"tp1": 2195,
+"tp2": 2274,
+"status": "waiting"
+},
+{
+"id": "20261111_4246",
+"code": "4246",
+"name": "ダイキョーニシカワ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-11",
+"entry": 999,
+"stop": 961,
+"tp1": 1036,
+"tp2": 1074,
+"status": "waiting"
+},
+{
+"id": "20261111_8715",
+"code": "8715",
+"name": "アニコム ホールディングス",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-11",
+"entry": 1034,
+"stop": 971,
+"tp1": 1098,
+"tp2": 1161,
+"status": "waiting"
+},
+{
+"id": "20261111_4393",
+"code": "4393",
+"name": "バンク・オブ・イノベーション",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-11",
+"entry": 6150,
+"stop": 5615,
+"tp1": 6690,
+"tp2": 7225,
+"status": "waiting"
 }
 ]
