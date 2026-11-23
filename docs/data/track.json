@@ -1826,7 +1826,7 @@
 "status": "open",
 "fill_date": "2026-11-20",
 "fill": 2275.0,
-"pnl": 0.7,
+"pnl": 0.35,
 "note": "保有中"
 },
 {
@@ -1843,7 +1843,7 @@
 "status": "open",
 "fill_date": "2026-11-20",
 "fill": 1682.0,
-"pnl": -1.72,
+"pnl": -1.49,
 "note": "保有中"
 },
 {
@@ -1874,6 +1874,84 @@
 "stop": 916,
 "tp1": 1081,
 "tp2": 1162,
+"status": "waiting"
+},
+{
+"id": "20261124_6191",
+"code": "6191",
+"name": "エアトリ",
+"group": "main",
+"grade": "本命",
+"created": "2026-11-24",
+"entry": 1456,
+"stop": 1378,
+"tp1": 1534,
+"tp2": 1612,
+"status": "waiting"
+},
+{
+"id": "20261124_3661",
+"code": "3661",
+"name": "エムアップホールディングス",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-24",
+"entry": 896,
+"stop": 854,
+"tp1": 939,
+"tp2": 981,
+"status": "waiting"
+},
+{
+"id": "20261124_7581",
+"code": "7581",
+"name": "サイゼリヤ",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-24",
+"entry": 8465,
+"stop": 8010,
+"tp1": 8920,
+"tp2": 9100,
+"status": "waiting"
+},
+{
+"id": "20261124_8511",
+"code": "8511",
+"name": "日本証券金融",
+"group": "main",
+"grade": "次点",
+"created": "2026-11-24",
+"entry": 2137,
+"stop": 2037,
+"tp1": 2238,
+"tp2": 2339,
+"status": "waiting"
+},
+{
+"id": "20261124_4228",
+"code": "4228",
+"name": "積水化成品工業",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-24",
+"entry": 649,
+"stop": 598,
+"tp1": 701,
+"tp2": 752,
+"status": "waiting"
+},
+{
+"id": "20261124_4554",
+"code": "4554",
+"name": "富士製薬工業",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-24",
+"entry": 1699,
+"stop": 1610,
+"tp1": 1788,
+"tp2": 1877,
 "status": "waiting"
 }
 ]
