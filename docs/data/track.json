@@ -1173,7 +1173,7 @@
 "status": "open",
 "fill_date": "2026-11-10",
 "fill": 2350.0,
-"pnl": 7.83,
+"pnl": 0.38,
 "note": "保有中"
 },
 {
@@ -1470,7 +1470,7 @@
 "status": "open",
 "fill_date": "2026-11-12",
 "fill": 1034.0,
-"pnl": -0.68,
+"pnl": -1.74,
 "note": "保有中"
 },
 {
@@ -1832,7 +1832,7 @@
 "status": "open",
 "fill_date": "2026-11-20",
 "fill": 2275.0,
-"pnl": 0.84,
+"pnl": 0.44,
 "note": "保有中"
 },
 {
@@ -1849,7 +1849,7 @@
 "status": "open",
 "fill_date": "2026-11-20",
 "fill": 1682.0,
-"pnl": 1.61,
+"pnl": 1.31,
 "note": "保有中"
 },
 {
@@ -1939,7 +1939,7 @@
 "status": "open",
 "fill_date": "2026-11-25",
 "fill": 2137.0,
-"pnl": -0.51,
+"pnl": -0.61,
 "note": "保有中"
 },
 {
@@ -2018,6 +2018,45 @@
 "stop": 1713,
 "tp1": 1831,
 "tp2": 1890,
+"status": "waiting"
+},
+{
+"id": "20261126_2337",
+"code": "2337",
+"name": "いちご",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-26",
+"entry": 424,
+"stop": 405,
+"tp1": 443,
+"tp2": 462,
+"status": "waiting"
+},
+{
+"id": "20261126_4933",
+"code": "4933",
+"name": "Ｉ－ｎｅ",
+"group": "rebound",
+"grade": "本命",
+"created": "2026-11-26",
+"entry": 2212,
+"stop": 2070,
+"tp1": 2354,
+"tp2": 2496,
+"status": "waiting"
+},
+{
+"id": "20261126_1301",
+"code": "1301",
+"name": "極洋",
+"group": "rebound",
+"grade": "次点",
+"created": "2026-11-26",
+"entry": 4540,
+"stop": 4395,
+"tp1": 4685,
+"tp2": 4805,
 "status": "waiting"
 }
 ]
